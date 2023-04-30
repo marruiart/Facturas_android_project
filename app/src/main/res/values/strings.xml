@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Invoices</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="invoices">Invoices</string>
+    <string name="filter_invoices">Filter invoices</string>
+    <string name="invoices_state">Invoices state</string>
+</resources>
