@@ -24,8 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_invoices);
         setLayoutManager();
-        fillInvoiceList();
-        initializeAdapter();
+        enqueueInvoices();
     }
 
     private LinearLayoutManager setLayoutManager() {
@@ -40,13 +39,24 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(adapter);
     }
 
-    private void fillInvoiceList() {
-        invoicesList.add(new InvoiceVO("Pagada", "40.15", "08/01/2019"));
-        invoicesList.add(new InvoiceVO("Pendiente de pago", "40.15", "08/01/2019"));
-        invoicesList.add(new InvoiceVO("Pendiente de pago", "40.15", "05/10/2018"));
-        invoicesList.add(new InvoiceVO("Pagada", "40.15", "10/03/2020"));
-        invoicesList.add(new InvoiceVO("Pendiente de pago", "40.15", "05/09/2018"));
-        invoicesList.add(new InvoiceVO("Pendiente de pago", "40.15", "05/09/2018"));
+    public void enqueueInvoices() {
+        Call<InvoicesApiResponse> call = InvoicesJsonApiAdapter.getApiService().getInvoices();
+        call.enqueue(new Callback<InvoicesApiResponse>() {
+            @Override
+            public void onResponse(Call<InvoicesApiResponse> call, Response<InvoicesApiResponse> response) {
+                if (response.isSuccessful()) {
+                    List<InvoiceVO> invoices = response.body().getFacturas();
+                    Log.d("onResponse invoices", "Size of 'facturas' list: " + invoices.size());
+                    invoicesList = response.body().getFacturas();
+                    initializeAdapter();
+                }
+            }
 
+            @Override
+            public void onFailure(Call<InvoicesApiResponse> call, Throwable t) {
+                String error = t.getMessage();
+                Log.d("onFailure error message", error);
+            }
+        });
     }
 }

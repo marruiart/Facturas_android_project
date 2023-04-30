@@ -1,16 +1,14 @@
 package com.example.facturas;
 
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecyclerAdapter.InvoicesViewHolder> {
@@ -31,7 +29,7 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
     @Override
     public void onBindViewHolder(@NonNull InvoicesViewHolder invoicesViewHolder, int position) {
         InvoiceVO invoice = invoices.get(position);
-        invoicesViewHolder.getTvInvoiceDate().setText(invoice.getFecha("dd MMM yyyy"));
+        invoicesViewHolder.getTvInvoiceDate().setText(invoice.getFecha());
         invoicesViewHolder.getTvInvoiceAmount().setText(String.format("%.2f €", invoice.getImporteOrdenacion()));
         invoicesViewHolder.getTvInvoiceState().setText(invoice.getDescEstado().equals("Pagada") ? "" : invoice.getDescEstado());
     }

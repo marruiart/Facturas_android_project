@@ -7,21 +7,16 @@ import android.util.Log;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class InvoiceVO {
     private String descEstado;
-    private float importeOrdenacion;
-    private Date fecha;
+    private Float importeOrdenacion;
+    private String fecha;
 
     public InvoiceVO(String descEstado, String importeOrdenacion, String fecha) {
         this.descEstado = descEstado;
         this.importeOrdenacion = Float.parseFloat(importeOrdenacion);
-        try {
-            this.fecha = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
-        } catch (ParseException e) {
-            Log.d(TAG, e.getStackTrace().toString());
-        }
+        this.fecha = fecha;
     }
 
     public String getDescEstado() {
@@ -32,23 +27,25 @@ public class InvoiceVO {
         this.descEstado = descEstado;
     }
 
-    public float getImporteOrdenacion() {
+    public Float getImporteOrdenacion() {
         return importeOrdenacion;
     }
 
-    public void setImporteOrdenacion(float importeOrdenacion) {
-        this.importeOrdenacion = importeOrdenacion;
+    public void setImporteOrdenacion(String importeOrdenacion) {
+        this.importeOrdenacion = Float.parseFloat(importeOrdenacion);
     }
 
-    public Date getFecha() {
-        return fecha;
+    public String getFecha() {
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("dd/MM/yyyy").parse(this.fecha);
+        } catch (ParseException e) {
+            Log.d(TAG, e.getStackTrace().toString());
+        }
+        return new SimpleDateFormat("dd MMM yyyy").format(date);
     }
 
-    public String getFecha(String datePattern) {
-        return new SimpleDateFormat(datePattern).format(fecha);
-    }
-
-    public void setFecha(Date fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 }
