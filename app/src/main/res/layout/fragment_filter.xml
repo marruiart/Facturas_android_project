@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/filter_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:paddingBottom="20dp"
     tools:context=".FilterFragment">
 
     <TextView
@@ -51,6 +54,7 @@
         android:contentDescription="@string/close_filters"
         android:minWidth="48dp"
         android:minHeight="48dp"
+        android:onClick="closeFilterFragment"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar_filters"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.955"
@@ -102,13 +106,12 @@
 
     <Button
         android:id="@+id/btn_pickerFrom"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
         android:onClick="showDatePickerDialog"
-
         android:text="@string/dd_MM_yy"
         app:layout_constraintEnd_toStartOf="@+id/btn_pickerTo"
         app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -116,14 +119,13 @@
 
     <Button
         android:id="@+id/btn_pickerTo"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="16dp"
         android:onClick="showDatePickerDialog"
         android:text="@string/dd_MM_yy"
-
         app:layout_constraintBaseline_toBaselineOf="@+id/btn_pickerFrom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_pickerFrom" />
