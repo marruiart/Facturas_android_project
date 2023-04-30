@@ -2,7 +2,20 @@
     <string name="app_name">Invoices</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="invoices">Invoices</string>
     <string name="filter_invoices">Filter invoices</string>
     <string name="invoices_state">Invoices state</string>
+    <string name="close_filters">Close filters</string>
+    <string name="to">To:</string>
+    <string name="by_amount">By amount</string>
+    <string name="by_state">By state</string>
+    <string name="date_of_issue">Date of issue</string>
+    <string name="from">From:</string>
+    <string name="dd_MM_yy">day/month/year</string>
+    <string name="paid">Paid</string>
+    <string name="pending_payment">Pending payment</string>
+    <string name="payment_plan">Payment plan</string>
+    <string name="fixed_fee">Fixed fee</string>
+    <string name="canceled">Canceled</string>
+    <string name="erase">Erase</string>
+    <string name="filter">Filter</string>
 </resources>
