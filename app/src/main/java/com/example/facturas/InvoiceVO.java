@@ -12,41 +12,34 @@ public class InvoiceVO {
     public static int maxImporteOrdenacion = 0;
     private String descEstado;
     private Float importeOrdenacion;
-    private String fecha;
+    private Date fecha;
 
     public InvoiceVO(String descEstado, String importeOrdenacion, String fecha) {
         this.descEstado = descEstado;
         this.importeOrdenacion = Float.parseFloat(importeOrdenacion);
-        this.fecha = fecha;
+        setFecha(fecha);
     }
 
     public String getDescEstado() {
         return descEstado;
     }
 
-    public void setDescEstado(String descEstado) {
-        this.descEstado = descEstado;
-    }
-
     public Float getImporteOrdenacion() {
         return importeOrdenacion;
     }
 
-    public void setImporteOrdenacion(String importeOrdenacion) {
-        this.importeOrdenacion = Float.parseFloat(importeOrdenacion);
+    public String getFecha(String format) {
+        return new SimpleDateFormat(format).format(fecha);
     }
-
-    public String getFecha() {
-        Date date = null;
-        try {
-            date = new SimpleDateFormat("dd/MM/yyyy").parse(this.fecha);
-        } catch (ParseException e) {
-            Log.d(TAG, e.getStackTrace().toString());
-        }
-        return new SimpleDateFormat("dd MMM yyyy").format(date);
+    public Date getFecha() {
+        return this.fecha;
     }
 
     public void setFecha(String fecha) {
-        this.fecha = fecha;
+        try {
+            this.fecha = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+        } catch (ParseException e) {
+            Log.d(TAG, e.getStackTrace().toString());
+        }
     }
 }

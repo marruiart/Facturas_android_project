@@ -1,5 +1,8 @@
 package com.example.facturas;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +25,13 @@ public class InvoicesJsonApiAdapter {
         httpClient.addInterceptor(loggin);
 
         if (API_SERVICE == null) {
+            Gson gson = new GsonBuilder()
+                    .setDateFormat("dd/MM/yyyy")
+                    .create();
+
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(httpClient.build())
                     .build();
             API_SERVICE = retrofit.create(InvoicesJsonApiService.class);

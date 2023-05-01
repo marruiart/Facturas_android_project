@@ -29,7 +29,7 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
     @Override
     public void onBindViewHolder(@NonNull InvoicesViewHolder invoicesViewHolder, int position) {
         InvoiceVO invoice = invoices.get(position);
-        invoicesViewHolder.getTvInvoiceDate().setText(invoice.getFecha());
+        invoicesViewHolder.getTvInvoiceDate().setText(invoice.getFecha("dd MMM yyyy"));
         invoicesViewHolder.getTvInvoiceAmount().setText(String.format("%.2f €", invoice.getImporteOrdenacion()));
         if (invoice.getImporteOrdenacion() > InvoiceVO.maxImporteOrdenacion)
             InvoiceVO.maxImporteOrdenacion = (int) Math.ceil(invoice.getImporteOrdenacion());
