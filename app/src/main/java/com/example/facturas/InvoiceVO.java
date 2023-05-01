@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class InvoiceVO {
+    public static int maxImporteOrdenacion = 0;
     private String descEstado;
     private Float importeOrdenacion;
     private String fecha;

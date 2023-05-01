@@ -1,5 +1,6 @@
 package com.example.facturas;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,21 +11,30 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-public class FilterFragment extends Fragment implements SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener {
+public class FilterFragment extends Fragment
+        implements SeekBar.OnSeekBarChangeListener,
+        CompoundButton.OnCheckedChangeListener,
+        DatePickerDialog.OnDateSetListener,
+        View.OnClickListener {
 
     private static int minRangeAmount = 0;
-    private static int maxRangeAmount = 999;
+    private static int maxRangeAmount = InvoiceVO.maxImporteOrdenacion;
     private static Date dateIssuedFrom = new Date(0);
     private static Date dateIssuedTo = new Date();
     private static HashMap<String, Boolean> state = new HashMap<>();
+    private int mSelectedButtonId;
 
     public FilterFragment() {
         // Empty constructor needed
@@ -79,6 +89,7 @@ public class FilterFragment extends Fragment implements SeekBar.OnSeekBarChangeL
         }
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +102,8 @@ public class FilterFragment extends Fragment implements SeekBar.OnSeekBarChangeL
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
         ((SeekBar) view.findViewById(R.id.seekBar_amount)).setOnSeekBarChangeListener(this);
         findAllCheckboxes((ViewGroup) view.getRootView());
+        view.findViewById(R.id.btn_pickerFrom).setOnClickListener(this);
+        view.findViewById(R.id.btn_pickerTo).setOnClickListener(this);
         return view;
     }
 
@@ -122,5 +135,41 @@ public class FilterFragment extends Fragment implements SeekBar.OnSeekBarChangeL
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // OnSeekBarChangeListener interface method
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        Date date = calendar.getTime();
+        String dateStr = new SimpleDateFormat("dd MMM yyyy").format(date);
+
+        if (mSelectedButtonId == R.id.btn_pickerFrom) {
+            dateIssuedFrom = date;
+            ((Button) getView().findViewById(R.id.btn_pickerFrom)).setText(dateStr);
+        } else if (mSelectedButtonId == R.id.btn_pickerTo) {
+            dateIssuedTo = date;
+            ((Button) getView().findViewById(R.id.btn_pickerTo)).setText(dateStr);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.btn_pickerFrom || v.getId() == R.id.btn_pickerTo) {
+            mSelectedButtonId = v.getId();
+
+            // Get current date
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Show DatePickerDialog
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+                    this, year, month, day);
+            datePickerDialog.show();
+        }
     }
 }

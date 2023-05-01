@@ -31,6 +31,8 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
         InvoiceVO invoice = invoices.get(position);
         invoicesViewHolder.getTvInvoiceDate().setText(invoice.getFecha());
         invoicesViewHolder.getTvInvoiceAmount().setText(String.format("%.2f €", invoice.getImporteOrdenacion()));
+        if (invoice.getImporteOrdenacion() > InvoiceVO.maxImporteOrdenacion)
+            InvoiceVO.maxImporteOrdenacion = (int) Math.ceil(invoice.getImporteOrdenacion());
         invoicesViewHolder.getTvInvoiceState().setText(invoice.getDescEstado().equals("Pagada") ? "" : invoice.getDescEstado());
     }
 

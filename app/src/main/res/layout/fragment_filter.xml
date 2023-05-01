@@ -10,14 +10,6 @@
     android:paddingBottom="20dp"
     tools:context=".FilterFragment">
 
-    <TextView
-        android:id="@+id/textView_toDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/to"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView_fromDate"
-        app:layout_constraintStart_toStartOf="@+id/btn_pickerTo" />
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_filters"
         android:layout_width="0dp"
@@ -74,47 +66,46 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar_filters" />
 
     <TextView
-        android:id="@+id/textView_byAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:text="@string/by_amount"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textView_minRange"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
-
-    <TextView
         android:id="@+id/textView_fromDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="@string/from"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/btn_pickerFrom"
         app:layout_constraintTop_toBottomOf="@+id/textView_issueDate" />
 
-    <Button
+    <TextView
+        android:id="@+id/textView_toDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/to"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_fromDate"
+        app:layout_constraintStart_toStartOf="@+id/btn_pickerTo" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_pickerFrom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginEnd="50dp"
+        android:background="@drawable/btn_radius"
         android:onClick="showDatePickerDialog"
         android:text="@string/dd_MM_yy"
+        android:textAllCaps="false"
         app:layout_constraintEnd_toStartOf="@+id/btn_pickerTo"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/textView_fromDate" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_pickerTo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="16dp"
+        android:background="@drawable/btn_radius"
         android:onClick="showDatePickerDialog"
         android:text="@string/dd_MM_yy"
+        android:textAllCaps="false"
         app:layout_constraintBaseline_toBaselineOf="@+id/btn_pickerFrom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_pickerFrom" />
@@ -131,13 +122,63 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_pickerFrom" />
 
+    <TextView
+        android:id="@+id/textView_byAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:text="@string/by_amount"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textView_minRange"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+
+    <TextView
+        android:id="@+id/textView_minRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/my_light_primary"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar_amount"
+        app:layout_constraintEnd_toStartOf="@+id/textView_filteredRange"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="@+id/seekBar_amount"
+        app:layout_constraintTop_toBottomOf="@+id/textView_byAmount"
+        tools:text="1 €" />
+
+    <TextView
+        android:id="@+id/textView_filteredRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/my_light_primary"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar_amount"
+        app:layout_constraintEnd_toStartOf="@+id/textView_maxRange"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textView_minRange"
+        tools:text="1 €   -   999 €" />
+
+    <TextView
+        android:id="@+id/textView_maxRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/my_light_primary"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_minRange"
+        app:layout_constraintEnd_toEndOf="@+id/seekBar_amount"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textView_filteredRange"
+        tools:text="999 €" />
+
     <SeekBar
         android:id="@+id/seekBar_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:tickMarkTint="@color/my_light_primary"
+        android:progressBackgroundTint="@color/my_light_primary"
+        android:progress="999"
         app:layout_constraintBottom_toTopOf="@+id/divider2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -178,6 +219,24 @@
         app:layout_constraintTop_toBottomOf="@+id/textView_byState" />
 
     <CheckBox
+        android:id="@+id/checkBox_canceled"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/canceled"
+        app:layout_constraintBottom_toTopOf="@+id/checkBox_fixedfee"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/checkBox_paid" />
+
+    <CheckBox
+        android:id="@+id/checkBox_fixedfee"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/fixed_fee"
+        app:layout_constraintBottom_toTopOf="@+id/checkBox_pending"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/checkBox_canceled" />
+
+    <CheckBox
         android:id="@+id/checkBox_pending"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
@@ -194,35 +253,6 @@
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/checkBox_pending" />
 
-    <CheckBox
-        android:id="@+id/checkBox_fixedfee"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/fixed_fee"
-        app:layout_constraintBottom_toTopOf="@+id/checkBox_pending"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox_canceled" />
-
-    <CheckBox
-        android:id="@+id/checkBox_canceled"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/canceled"
-        app:layout_constraintBottom_toTopOf="@+id/checkBox_fixedfee"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox_paid" />
-
-    <Button
-        android:id="@+id/btn_erase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/erase"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btn_apply"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_apply" />
-
     <Button
         android:id="@+id/btn_apply"
         android:layout_width="wrap_content"
@@ -235,50 +265,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/checkBox_plan" />
 
+    <Button
+        android:id="@+id/btn_erase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/erase"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btn_apply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_apply" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="16dp" />
-
-    <TextView
-        android:id="@+id/textView_minRange"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:textColor="@color/my_light_primary"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar_amount"
-        app:layout_constraintEnd_toStartOf="@+id/textView_filteredRange"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@+id/seekBar_amount"
-        app:layout_constraintTop_toBottomOf="@+id/textView_byAmount"
-        tools:text="1 €" />
-
-    <TextView
-        android:id="@+id/textView_maxRange"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:textColor="@color/my_light_primary"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView_minRange"
-        app:layout_constraintEnd_toEndOf="@+id/seekBar_amount"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView_filteredRange"
-        tools:text="999 €" />
-
-    <TextView
-        android:id="@+id/textView_filteredRange"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:textColor="@color/my_light_primary"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar_amount"
-        app:layout_constraintEnd_toStartOf="@+id/textView_maxRange"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView_minRange"
-        tools:text="1 €   -   999 €" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
