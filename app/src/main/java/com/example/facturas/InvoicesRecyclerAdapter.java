@@ -1,5 +1,8 @@
 package com.example.facturas;
 
+import static android.graphics.Color.*;
+
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +34,8 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
         InvoiceVO invoice = invoices.get(position);
         invoicesViewHolder.getTvInvoiceDate().setText(invoice.getFecha("dd MMM yyyy"));
         invoicesViewHolder.getTvInvoiceAmount().setText(String.format("%.2f €", invoice.getImporteOrdenacion()));
-        if (invoice.getImporteOrdenacion() > InvoiceVO.maxImporteOrdenacion)
-            InvoiceVO.maxImporteOrdenacion = (int) Math.ceil(invoice.getImporteOrdenacion());
-        invoicesViewHolder.getTvInvoiceState().setText(invoice.getDescEstado().equals("Pagada") ? "" : invoice.getDescEstado());
+        invoicesViewHolder.getTvInvoiceState().setText(invoice.getDescEstado());
+        invoicesViewHolder.getTvInvoiceState().setTextColor(invoice.getTextColor());
     }
 
     @Override

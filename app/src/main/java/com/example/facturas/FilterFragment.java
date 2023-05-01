@@ -1,6 +1,7 @@
 package com.example.facturas;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,9 +29,18 @@ public class FilterFragment extends Fragment
         DatePickerDialog.OnDateSetListener,
         View.OnClickListener {
     private int mSelectedButtonId;
+    private OnDataPassListener activityCallback;
 
     public FilterFragment() {
         // Empty constructor needed
+    }
+
+    public interface OnDataPassListener {
+        public void onFilterApply();
+    }
+
+    private void applyFilter() {
+        activityCallback.onFilterApply();
     }
 
     private void resetFilter() {
@@ -94,6 +104,16 @@ public class FilterFragment extends Fragment
     }
 
     @Override
+    public void onAttach(@NonNull Context activity) {
+        super.onAttach(activity);
+        try {
+            activityCallback = (OnDataPassListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity + " must implement ToolbarListener");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -107,6 +127,7 @@ public class FilterFragment extends Fragment
         findAllCheckboxes((ViewGroup) view.getRootView());
         view.findViewById(R.id.btn_pickerFrom).setOnClickListener(this);
         view.findViewById(R.id.btn_pickerTo).setOnClickListener(this);
+        view.findViewById(R.id.btn_apply).setOnClickListener(this);
         view.findViewById(R.id.btn_erase).setOnClickListener(this);
         return view;
     }
@@ -176,6 +197,8 @@ public class FilterFragment extends Fragment
             datePickerDialog.show();
         } else if (v.getId() == R.id.btn_erase) {
             resetFilter();
+        } else if (v.getId() == R.id.btn_apply) {
+            applyFilter();
         }
     }
 }
