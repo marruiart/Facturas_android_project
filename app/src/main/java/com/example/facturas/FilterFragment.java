@@ -2,11 +2,6 @@ package com.example.facturas;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,46 +13,55 @@ import android.widget.DatePicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 
 public class FilterFragment extends Fragment
         implements SeekBar.OnSeekBarChangeListener,
         CompoundButton.OnCheckedChangeListener,
         DatePickerDialog.OnDateSetListener,
         View.OnClickListener {
-
-    private static int minRangeAmount = 0;
-    private static int maxRangeAmount = InvoiceVO.maxImporteOrdenacion;
-    private static Date dateIssuedFrom = new Date(0);
-    private static Date dateIssuedTo = new Date();
-    private static HashMap<String, Boolean> state = new HashMap<>();
     private int mSelectedButtonId;
 
     public FilterFragment() {
         // Empty constructor needed
     }
 
-    public static int getMinRangeAmount() {
-        return minRangeAmount;
+    private void resetFilter() {
+        resetDatePickers();
+        resetSeekbarAmount();
+        resetAllCheckboxes();
     }
 
-    public static int getMaxRangeAmount() {
-        return maxRangeAmount;
+    private void resetDatePickers() {
+        FilterDataVO.setDateIssuedFrom(new Date(0));
+        Button btnPickerFrom = getView().findViewById(R.id.btn_pickerFrom);
+        btnPickerFrom.setText(getResources().getString(R.string.dd_MM_yy));
+        FilterDataVO.setDateIssuedTo(new Date());
+        Button btnPickerTo = getView().findViewById(R.id.btn_pickerTo);
+        btnPickerTo.setText(getResources().getString(R.string.dd_MM_yy));
+        Log.d("resetDatePickers", "datePickers reset");
     }
 
-    public static Date getDateIssuedFrom() {
-        return dateIssuedFrom;
+    private void resetSeekbarAmount() {
+        FilterDataVO.setMaxRangeAmount(InvoiceVO.maxImporteOrdenacion);
+        ((SeekBar) getView().findViewById(R.id.seekBar_amount)).setProgress(FilterDataVO.getMaxRangeAmount());
+        Log.d("resetSeekbarAmount", "SeekBar reset");
     }
 
-    public static Date getDateIssuedTo() {
-        return dateIssuedTo;
-    }
-
-    public static HashMap<String, Boolean> getState() {
-        return state;
+    private void resetAllCheckboxes() {
+        for (Map.Entry<Integer, Boolean> state : FilterDataVO.getState().entrySet()) {
+            CheckBox c = getView().findViewById(state.getKey());
+            c.setChecked(false);
+            state.setValue(false);
+        }
+        Log.d("resetAllCheckboxes", "CheckBoxes reset");
     }
 
     private void setSeekbarRange(int minRangeAmount, int maxRangeAmount) {
@@ -83,7 +87,7 @@ public class FilterFragment extends Fragment
                 String idString = getResources().getResourceEntryName(child.getId());
                 if (idString.contains("checkBox")) {
                     ((CheckBox) child).setOnCheckedChangeListener(this);
-                    state.put(idString, ((CheckBox) child).isChecked());
+                    FilterDataVO.putStateCheckbox(child.getId(), ((CheckBox) child).isChecked());
                 }
             }
         }
@@ -103,27 +107,28 @@ public class FilterFragment extends Fragment
         findAllCheckboxes((ViewGroup) view.getRootView());
         view.findViewById(R.id.btn_pickerFrom).setOnClickListener(this);
         view.findViewById(R.id.btn_pickerTo).setOnClickListener(this);
+        view.findViewById(R.id.btn_erase).setOnClickListener(this);
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setSeekbarRange(minRangeAmount, maxRangeAmount);
+        setSeekbarRange(FilterDataVO.getMinRangeAmount(), FilterDataVO.getMaxRangeAmount());
     }
 
     @Override
     public void onCheckedChanged(CompoundButton view, boolean isChecked) {
         String idString = getResources().getResourceEntryName(view.getId());
-        state.put(idString, isChecked);
+        FilterDataVO.putStateCheckbox(view.getId(), view.isChecked());
         Log.d(idString, "" + isChecked);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        this.maxRangeAmount = progress;
+        FilterDataVO.setMaxRangeAmount(progress);
         Log.d("SeekBar", "New max in range: " + progress);
-        setFilteredRangeTextview(minRangeAmount, maxRangeAmount);
+        setFilteredRangeTextview(FilterDataVO.getMinRangeAmount(), FilterDataVO.getMaxRangeAmount());
     }
 
     @Override
@@ -146,10 +151,10 @@ public class FilterFragment extends Fragment
         String dateStr = new SimpleDateFormat("dd MMM yyyy").format(date);
 
         if (mSelectedButtonId == R.id.btn_pickerFrom) {
-            dateIssuedFrom = date;
+            FilterDataVO.setDateIssuedFrom(date);
             ((Button) getView().findViewById(R.id.btn_pickerFrom)).setText(dateStr);
         } else if (mSelectedButtonId == R.id.btn_pickerTo) {
-            dateIssuedTo = date;
+            FilterDataVO.setDateIssuedTo(date);
             ((Button) getView().findViewById(R.id.btn_pickerTo)).setText(dateStr);
         }
     }
@@ -169,6 +174,8 @@ public class FilterFragment extends Fragment
             DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
                     this, year, month, day);
             datePickerDialog.show();
+        } else if (v.getId() == R.id.btn_erase) {
+            resetFilter();
         }
     }
 }
