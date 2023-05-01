@@ -6,16 +6,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.Date;
 import java.util.HashMap;
 
-public class FilterFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
+public class FilterFragment extends Fragment implements SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener {
 
     private static int minRangeAmount = 0;
     private static int maxRangeAmount = 999;
@@ -62,6 +65,20 @@ public class FilterFragment extends Fragment implements SeekBar.OnSeekBarChangeL
         filteredRangeTv.setText(String.format("%d €   -   %d €", minRangeAmount, maxRangeAmount));
     }
 
+    private void findAllCheckboxes(ViewGroup viewGroup) {
+        int childCount = viewGroup.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = viewGroup.getChildAt(i);
+            if (child instanceof CheckBox && child.getId() != View.NO_ID) {
+                String idString = getResources().getResourceEntryName(child.getId());
+                if (idString.contains("checkBox")) {
+                    ((CheckBox) child).setOnCheckedChangeListener(this);
+                    state.put(idString, ((CheckBox) child).isChecked());
+                }
+            }
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +89,8 @@ public class FilterFragment extends Fragment implements SeekBar.OnSeekBarChangeL
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
-        SeekBar amountSeekbar = view.findViewById(R.id.seekBar_amount);
-        amountSeekbar.setOnSeekBarChangeListener(this);
+        ((SeekBar) view.findViewById(R.id.seekBar_amount)).setOnSeekBarChangeListener(this);
+        findAllCheckboxes((ViewGroup) view.getRootView());
         return view;
     }
 
@@ -84,8 +101,16 @@ public class FilterFragment extends Fragment implements SeekBar.OnSeekBarChangeL
     }
 
     @Override
+    public void onCheckedChanged(CompoundButton view, boolean isChecked) {
+        String idString = getResources().getResourceEntryName(view.getId());
+        state.put(idString, isChecked);
+        Log.d(idString, "" + isChecked);
+    }
+
+    @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         this.maxRangeAmount = progress;
+        Log.d("SeekBar", "New max in range: " + progress);
         setFilteredRangeTextview(minRangeAmount, maxRangeAmount);
     }
 
