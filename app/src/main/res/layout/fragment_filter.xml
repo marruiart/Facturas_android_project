@@ -77,23 +77,12 @@
         android:id="@+id/textView_byAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="30dp"
         android:text="@string/by_amount"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar_amount"
+        app:layout_constraintBottom_toTopOf="@+id/textView_minRange"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/divider1" />
-
-    <TextView
-        android:id="@+id/textView_byState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="@string/by_state"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/checkBox_paid"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <TextView
         android:id="@+id/textView_fromDate"
@@ -142,6 +131,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_pickerFrom" />
 
+    <SeekBar
+        android:id="@+id/seekBar_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:tickMarkTint="@color/my_light_primary"
+        app:layout_constraintBottom_toTopOf="@+id/divider2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/textView_minRange" />
+
     <View
         android:id="@+id/divider2"
         android:layout_width="0dp"
@@ -151,23 +152,21 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintBottom_toTopOf="@+id/textView_byState"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seekBar_amount"
         app:layout_constraintVertical_chainStyle="spread" />
 
-    <SeekBar
-        android:id="@+id/seekBar_amount"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textView_byState"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:max="300"
-        android:min="0"
-        android:tickMarkTint="@color/my_light_primary"
-        app:layout_constraintBottom_toTopOf="@+id/divider2"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="20dp"
+        android:text="@string/by_state"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/checkBox_paid"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/textView_byAmount" />
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <CheckBox
         android:id="@+id/checkBox_paid"
@@ -242,6 +241,44 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="16dp" />
+
+    <TextView
+        android:id="@+id/textView_minRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/my_light_primary"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar_amount"
+        app:layout_constraintEnd_toStartOf="@+id/textView_filteredRange"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="@+id/seekBar_amount"
+        app:layout_constraintTop_toBottomOf="@+id/textView_byAmount"
+        tools:text="1 €" />
+
+    <TextView
+        android:id="@+id/textView_maxRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/my_light_primary"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_minRange"
+        app:layout_constraintEnd_toEndOf="@+id/seekBar_amount"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textView_filteredRange"
+        tools:text="999 €" />
+
+    <TextView
+        android:id="@+id/textView_filteredRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/my_light_primary"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar_amount"
+        app:layout_constraintEnd_toStartOf="@+id/textView_maxRange"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textView_minRange"
+        tools:text="1 €   -   999 €" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
