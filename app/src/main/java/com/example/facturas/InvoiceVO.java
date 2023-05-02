@@ -43,18 +43,25 @@ public class InvoiceVO implements Parcelable {
     public void setDescEstado(String descEstado) {
         Resources context = App.getContext().getResources();
         switch (descEstado) {
-            case "Pagada" -> {
+            case "Pagada":
                 this.textColor = BLUE;
                 this.descEstado = context.getString(R.string.paid);
-            }
-            case "Anulada" -> this.descEstado = context.getString(R.string.canceled);
-            case "Cuota fija" -> this.descEstado = context.getString(R.string.fixed_fee);
-            case "Pendiente de pago" -> {
+                break;
+            case "Anulada":
+                this.descEstado = context.getString(R.string.canceled);
+                break;
+            case "Cuota fija":
+                this.descEstado = context.getString(R.string.fixed_fee);
+                break;
+            case "Pendiente de pago":
                 this.textColor = RED;
                 this.descEstado = context.getString(R.string.pending_payment);
-            }
-            case "Plan de pago" -> this.descEstado = context.getString(R.string.payment_plan);
-            default -> this.textColor = BLACK;
+                break;
+            case "Plan de pago":
+                this.descEstado = context.getString(R.string.payment_plan);
+                break;
+            default:
+                this.textColor = BLACK;
         }
     }
 
