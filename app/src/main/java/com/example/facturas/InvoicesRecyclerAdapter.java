@@ -1,8 +1,5 @@
 package com.example.facturas;
 
-import static android.graphics.Color.*;
-
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +8,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecyclerAdapter.InvoicesViewHolder> {
-    private ArrayList<InvoiceVO> invoices = new ArrayList<>();
+    private ArrayList<InvoiceVO> invoices;
+    private RecyclerOnClickListener listener;
 
     public InvoicesRecyclerAdapter(ArrayList<InvoiceVO> invoices) {
         this.invoices = invoices;
+    }
+
+    public interface RecyclerOnClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(RecyclerOnClickListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -31,6 +36,10 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
 
     @Override
     public void onBindViewHolder(@NonNull InvoicesViewHolder invoicesViewHolder, int position) {
+        invoicesViewHolder.itemView.setOnClickListener(v -> {
+            if (listener != null)
+                listener.onItemClick(position);
+        });
         InvoiceVO invoice = invoices.get(position);
         invoicesViewHolder.getTvInvoiceDate().setText(invoice.getFecha("dd MMM yyyy"));
         invoicesViewHolder.getTvInvoiceAmount().setText(String.format("%.2f €", invoice.getImporteOrdenacion()));

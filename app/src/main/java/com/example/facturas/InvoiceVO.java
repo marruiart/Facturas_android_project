@@ -42,9 +42,9 @@ public class InvoiceVO implements Parcelable {
 
     public void setDescEstado(String descEstado) {
         Resources context = App.getContext().getResources();
+        this.textColor = BLACK;
         switch (descEstado) {
             case "Pagada":
-                this.textColor = BLUE;
                 this.descEstado = context.getString(R.string.paid);
                 break;
             case "Anulada":
@@ -61,7 +61,7 @@ public class InvoiceVO implements Parcelable {
                 this.descEstado = context.getString(R.string.payment_plan);
                 break;
             default:
-                this.textColor = BLACK;
+                this.descEstado = "";
         }
     }
 

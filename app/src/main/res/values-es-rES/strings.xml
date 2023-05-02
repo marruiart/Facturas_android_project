@@ -17,4 +17,5 @@
     <string name="canceled">Anulada</string>
     <string name="erase">Borrar filtros</string>
     <string name="filter">Aplicar filtros</string>
+    <string name="not_found">No se encontraron facturas</string>
 </resources>

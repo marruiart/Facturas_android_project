@@ -17,4 +17,5 @@
     <string name="canceled">Canceled</string>
     <string name="erase">Erase filters</string>
     <string name="filter">Apply filters</string>
+    <string name="not_found">No invoices found</string>
 </resources>
