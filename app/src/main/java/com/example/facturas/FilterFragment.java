@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -28,6 +29,8 @@ public class FilterFragment extends Fragment
         CompoundButton.OnCheckedChangeListener,
         DatePickerDialog.OnDateSetListener,
         View.OnClickListener {
+
+    private ArrayList<InvoiceVO> retrievedList;
     private int mSelectedButtonId;
     private OnDataPassListener activityCallback;
 
@@ -37,6 +40,27 @@ public class FilterFragment extends Fragment
 
     public interface OnDataPassListener {
         public void onFilterApply();
+    }
+
+    private void retrieveInvoiceList() {
+        // Get the ArrayList from the Bundle
+        Bundle bundle = getArguments();
+        retrievedList = bundle.getParcelableArrayList("invoicesList");
+    }
+
+    private void findMaxRangeAmount() {
+        for (InvoiceVO invoice : retrievedList) {
+            if (invoice.getImporteOrdenacion() > FilterDataVO.getMaxRangeAmount())
+                FilterDataVO.setMaxRangeAmount((int) Math.ceil(invoice.getImporteOrdenacion()));
+        }
+    }
+
+    private void setClickListeners(View view) {
+        ((SeekBar) view.findViewById(R.id.seekBar_amount)).setOnSeekBarChangeListener(this);
+        view.findViewById(R.id.btn_pickerFrom).setOnClickListener(this);
+        view.findViewById(R.id.btn_pickerTo).setOnClickListener(this);
+        view.findViewById(R.id.btn_apply).setOnClickListener(this);
+        view.findViewById(R.id.btn_erase).setOnClickListener(this);
     }
 
     private void applyFilter() {
@@ -60,7 +84,7 @@ public class FilterFragment extends Fragment
     }
 
     private void resetSeekbarAmount() {
-        FilterDataVO.setMaxRangeAmount(InvoiceVO.maxImporteOrdenacion);
+        FilterDataVO.setMaxRangeAmount(FilterDataVO.getMaxRangeAmount());
         ((SeekBar) getView().findViewById(R.id.seekBar_amount)).setProgress(FilterDataVO.getMaxRangeAmount());
         Log.d("resetSeekbarAmount", "SeekBar reset");
     }
@@ -123,12 +147,10 @@ public class FilterFragment extends Fragment
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
-        ((SeekBar) view.findViewById(R.id.seekBar_amount)).setOnSeekBarChangeListener(this);
         findAllCheckboxes((ViewGroup) view.getRootView());
-        view.findViewById(R.id.btn_pickerFrom).setOnClickListener(this);
-        view.findViewById(R.id.btn_pickerTo).setOnClickListener(this);
-        view.findViewById(R.id.btn_apply).setOnClickListener(this);
-        view.findViewById(R.id.btn_erase).setOnClickListener(this);
+        setClickListeners(view);
+        retrieveInvoiceList();
+        findMaxRangeAmount();
         return view;
     }
 

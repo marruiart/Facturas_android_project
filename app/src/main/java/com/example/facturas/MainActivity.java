@@ -33,6 +33,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     public void openFilterFragment(View v) {
         FilterFragment filterFragment = new FilterFragment();
+        Bundle passedData = new Bundle();
+        passedData.putParcelableArrayList("invoicesList", invoicesList);
+        filterFragment.setArguments(passedData);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragmentContainerView, filterFragment, FRAGMENT_TAG)
@@ -74,10 +77,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     InvoicesApiResponse apiResponse = response.body();
                     if (apiResponse != null) {
                         invoicesList = apiResponse.getFacturas();
-                        // Set state to String app resources and set MaxImporteOrdenacion
+                        // Set state as strings from app resources
                         for (InvoiceVO invoice : invoicesList) {
-                            if (invoice.getImporteOrdenacion() > InvoiceVO.maxImporteOrdenacion)
-                                InvoiceVO.maxImporteOrdenacion = (int) Math.ceil(invoice.getImporteOrdenacion());
                             invoice.setDescEstado(invoice.getDescEstado());
                         }
                         Log.d("onResponse invoices", "Size of 'facturas' list: " + invoicesList.size());

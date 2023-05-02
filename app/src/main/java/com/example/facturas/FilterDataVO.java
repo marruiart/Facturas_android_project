@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class FilterDataVO {
     private static int minRangeAmount = 0;
-    private static int maxRangeAmount = InvoiceVO.maxImporteOrdenacion;
+    private static int maxRangeAmount = 0;
     private static Date dateIssuedFrom = new Date(0);
     private static Date dateIssuedTo = new Date();
     private static HashMap<Integer, Boolean> state = new HashMap<>();
