@@ -46,7 +46,6 @@
         android:contentDescription="@string/close_filters"
         android:minWidth="48dp"
         android:minHeight="48dp"
-        android:onClick="closeFilterFragment"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar_filters"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.955"

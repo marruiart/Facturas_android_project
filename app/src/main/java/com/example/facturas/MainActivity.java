@@ -42,17 +42,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 .commit();
     }
 
-    public void closeFilterFragment(View v) {
-        Fragment filterFragment = getSupportFragmentManager()
-                .findFragmentByTag("FILTER_FRAGMENT");
-        if (filterFragment != null) {
-            getSupportFragmentManager().
-                    beginTransaction().
-                    remove(filterFragment).
-                    commit();
-        }
-    }
-
     private void setLayoutManager() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -95,31 +84,22 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         });
     }
 
-    private void applyDateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
-        filteredInvoicesList.removeIf(i -> i.getFecha().before(FilterDataVO.getDateIssuedFrom()));
-        filteredInvoicesList.removeIf(i -> i.getFecha().after(FilterDataVO.getDateIssuedTo()));
-    }
-
-    private void applyAmountFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
-        filteredInvoicesList.removeIf(i -> i.getImporteOrdenacion() > FilterDataVO.getMaxRangeAmount());
-    }
-
-    private void applyStateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
-        for (Map.Entry<Integer, Boolean> state : FilterDataVO.getState().entrySet()) {
-            CheckBox c = this.findViewById(state.getKey());
-            CharSequence checkboxText = c.getText();
-            filteredInvoicesList.removeIf(i -> state.getValue() && !i.getDescEstado().equals(checkboxText));
-        }
+    @Override
+    public void onFilterApply(ArrayList<InvoiceVO> filteredInvoicesList) {
+        onFilterClose();
+        initializeAdapter(filteredInvoicesList);
+        Log.d("filterApplied", String.format("Original size: %d  Filtered size: %d", invoicesList.size(), filteredInvoicesList.size()));
     }
 
     @Override
-    public void onFilterApply() {
-        closeFilterFragment(null);
-        ArrayList<InvoiceVO> filteredInvoicesList = (ArrayList<InvoiceVO>) invoicesList.clone();
-        applyDateFilter(filteredInvoicesList);
-        applyAmountFilter(filteredInvoicesList);
-        applyStateFilter(filteredInvoicesList);
-        initializeAdapter(filteredInvoicesList);
-        Log.d("filterApplied", String.format("Original size: %d  Filtered size: %d", invoicesList.size(), filteredInvoicesList.size()));
+    public void onFilterClose() {
+        Fragment filterFragment = getSupportFragmentManager()
+                .findFragmentByTag("FILTER_FRAGMENT");
+        if (filterFragment != null) {
+            getSupportFragmentManager().
+                    beginTransaction().
+                    remove(filterFragment).
+                    commit();
+        }
     }
 }

@@ -1,58 +1,86 @@
 package com.example.facturas;
 
-import android.widget.CheckBox;
-
 import java.util.Date;
 import java.util.HashMap;
 
 public class FilterDataVO {
-    private static int minRangeAmount = 0;
-    private static int maxRangeAmount = 0;
-    private static Date dateIssuedFrom = new Date(0);
-    private static Date dateIssuedTo = new Date();
-    private static HashMap<Integer, Boolean> state = new HashMap<>();
+    private static FilterDataVO instance = null;
+    private int minRangeAmount;
+    private int maxRangeAmount;
+    private int amountProgress;
+    private Date dateIssuedFrom;
+    private Date dateIssuedTo;
+    private HashMap<Integer, Boolean> state;
 
-    public static int getMinRangeAmount() {
+    public FilterDataVO(int minRangeAmount, int maxRangeAmount, int amountProgress, Date dateIssuedFrom, Date dateIssuedTo) {
+        this.minRangeAmount = minRangeAmount;
+        this.maxRangeAmount = maxRangeAmount;
+        this.amountProgress = amountProgress;
+        this.dateIssuedFrom = dateIssuedFrom;
+        this.dateIssuedTo = dateIssuedTo;
+        this.state = new HashMap<>();
+    }
+
+    public static FilterDataVO getInstance() {
+        if (instance == null) {
+            instance = new FilterDataVO(0, 0, 0, new Date(0), new Date());
+        }
+        return instance;
+    }
+
+    public static void resetInstance() {
+        instance = null;
+    }
+
+    public int getMinRangeAmount() {
         return minRangeAmount;
     }
 
-    public static void setMinRangeAmount(int minRangeAmount) {
-        FilterDataVO.minRangeAmount = minRangeAmount;
+    public void setMinRangeAmount(int minRangeAmount) {
+        this.minRangeAmount = minRangeAmount;
     }
 
-    public static int getMaxRangeAmount() {
+    public int getMaxRangeAmount() {
         return maxRangeAmount;
     }
 
-    public static void setMaxRangeAmount(int maxRangeAmount) {
-        FilterDataVO.maxRangeAmount = maxRangeAmount;
+    public void setMaxRangeAmount(int maxRangeAmount) {
+        this.maxRangeAmount = maxRangeAmount;
     }
 
-    public static Date getDateIssuedFrom() {
+    public int getAmountProgress() {
+        return amountProgress;
+    }
+
+    public void setAmountProgress(int amountProgress) {
+        this.amountProgress = amountProgress;
+    }
+
+    public Date getDateIssuedFrom() {
         return dateIssuedFrom;
     }
 
-    public static void setDateIssuedFrom(Date dateIssuedFrom) {
-        FilterDataVO.dateIssuedFrom = dateIssuedFrom;
+    public void setDateIssuedFrom(Date dateIssuedFrom) {
+        this.dateIssuedFrom = dateIssuedFrom;
     }
 
-    public static Date getDateIssuedTo() {
+    public Date getDateIssuedTo() {
         return dateIssuedTo;
     }
 
-    public static void setDateIssuedTo(Date dateIssuedTo) {
-        FilterDataVO.dateIssuedTo = dateIssuedTo;
+    public void setDateIssuedTo(Date dateIssuedTo) {
+        this.dateIssuedTo = dateIssuedTo;
     }
 
-    public static HashMap<Integer, Boolean> getState() {
+    public HashMap<Integer, Boolean> getState() {
         return state;
     }
 
-    public static void setState(HashMap<Integer, Boolean> state) {
-        FilterDataVO.state = state;
+    public void setState(HashMap<Integer, Boolean> state) {
+        this.state = state;
     }
 
-    public static void putStateCheckbox (Integer id, Boolean isChecked) {
+    public void putStateCheckbox(Integer id, Boolean isChecked) {
         state.put(id, isChecked);
     }
 }
