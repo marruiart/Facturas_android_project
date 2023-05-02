@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Facturas</string>
+    <string name="filter_invoices">Filtrar facturas</string>
+    <string name="invoices_state">Estado de la factura</string>
+    <string name="close_filters">Cerrar filtros</string>
+    <string name="to">Hasta:</string>
+    <string name="by_amount">Por un importe</string>
+    <string name="by_state">Por estado</string>
+    <string name="date_of_issue">Con fecha de emisión</string>
+    <string name="from">Desde:</string>
+    <string name="dd_MM_yy">día/mes/año</string>
+    <string name="paid">Pagada</string>
+    <string name="pending_payment">Pendiente de pago</string>
+    <string name="payment_plan">Plan de pago</string>
+    <string name="fixed_fee">Cuota fija</string>
+    <string name="canceled">Anulada</string>
+    <string name="erase">Borrar filtros</string>
+    <string name="filter">Aplicar filtros</string>
+</resources>

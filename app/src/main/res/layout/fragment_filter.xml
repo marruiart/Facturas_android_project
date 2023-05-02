@@ -62,7 +62,7 @@
         android:layout_marginTop="20dp"
         android:text="@string/date_of_issue"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_filters" />
 
     <TextView
@@ -84,29 +84,31 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_pickerFrom"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="50dp"
         android:background="@drawable/btn_radius"
         android:text="@string/dd_MM_yy"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toStartOf="@+id/btn_pickerTo"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_centerLeft"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/textView_fromDate" />
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/textView_fromDate"
+        app:layout_constraintWidth_max="400dp"
+        app:layout_constraintWidth_min="125dp" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_pickerTo"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_radius"
         android:text="@string/dd_MM_yy"
         android:textAllCaps="false"
         app:layout_constraintBaseline_toBaselineOf="@+id/btn_pickerFrom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_pickerFrom" />
+        app:layout_constraintEnd_toEndOf="@+id/guideline_btnRight"
+        app:layout_constraintStart_toStartOf="@+id/guideline_centerRight"
+        app:layout_constraintWidth_max="400dp"
+        app:layout_constraintWidth_min="125dp" />
 
     <View
         android:id="@+id/divider1"
@@ -128,14 +130,14 @@
         android:text="@string/by_amount"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView_minRange"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/divider1" />
 
     <TextView
         android:id="@+id/textView_minRange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="16dp"
         android:textColor="@color/my_light_primary"
         app:layout_constraintBottom_toTopOf="@+id/seekBar_amount"
         app:layout_constraintEnd_toStartOf="@+id/textView_filteredRange"
@@ -171,15 +173,13 @@
 
     <SeekBar
         android:id="@+id/seekBar_amount"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:progressBackgroundTint="@color/my_light_primary"
         android:progress="999"
+        android:progressBackgroundTint="@color/my_light_primary"
         app:layout_constraintBottom_toTopOf="@+id/divider2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/textView_minRange" />
 
     <View
@@ -204,7 +204,7 @@
         android:text="@string/by_state"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/checkBox_paid"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <CheckBox
@@ -213,7 +213,7 @@
         android:layout_height="48dp"
         android:text="@string/paid"
         app:layout_constraintBottom_toTopOf="@+id/checkBox_canceled"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/textView_byState" />
 
     <CheckBox
@@ -222,7 +222,7 @@
         android:layout_height="48dp"
         android:text="@string/canceled"
         app:layout_constraintBottom_toTopOf="@+id/checkBox_fixedfee"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/checkBox_paid" />
 
     <CheckBox
@@ -231,7 +231,7 @@
         android:layout_height="48dp"
         android:text="@string/fixed_fee"
         app:layout_constraintBottom_toTopOf="@+id/checkBox_pending"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/checkBox_canceled" />
 
     <CheckBox
@@ -240,7 +240,7 @@
         android:layout_height="48dp"
         android:text="@string/pending_payment"
         app:layout_constraintBottom_toTopOf="@+id/checkBox_plan"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/checkBox_fixedfee" />
 
     <CheckBox
@@ -248,37 +248,67 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:text="@string/payment_plan"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/checkBox_pending" />
 
     <Button
         android:id="@+id/btn_apply"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/filter"
-        app:layout_constraintEnd_toStartOf="@+id/btn_erase"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox_plan" />
+        app:layout_constraintBottom_toTopOf="@+id/btn_erase"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/checkBox_plan"
+        app:layout_constraintWidth_max="500dp" />
 
     <Button
         android:id="@+id/btn_erase"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="20dp"
         android:text="@string/erase"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btn_apply"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_apply" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_apply"
+        app:layout_constraintStart_toStartOf="@+id/btn_apply"
+        app:layout_constraintTop_toBottomOf="@+id/btn_apply" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
+        android:id="@+id/guideline_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="16dp" />
+        app:layout_constraintGuide_percent="0.04" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.96" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_centerLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.44" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_centerRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_btnRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1058dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9"
+        app:layout_constraintStart_toStartOf="@+id/guideline_centerRight" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
