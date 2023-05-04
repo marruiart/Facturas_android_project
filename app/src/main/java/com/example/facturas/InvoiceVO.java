@@ -1,18 +1,12 @@
 package com.example.facturas;
 
-import static android.content.ContentValues.TAG;
 import static android.graphics.Color.BLACK;
-import static android.graphics.Color.BLUE;
 import static android.graphics.Color.RED;
 
 import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -45,20 +39,20 @@ public class InvoiceVO implements Parcelable {
         this.textColor = BLACK;
         switch (descEstado) {
             case "Pagada":
-                this.descEstado = context.getString(R.string.paid);
+                this.descEstado = context.getString(R.string.fragment_filter_cb_paid);
                 break;
             case "Anulada":
-                this.descEstado = context.getString(R.string.canceled);
+                this.descEstado = context.getString(R.string.fragment_filter_cb_canceled);
                 break;
             case "Cuota fija":
-                this.descEstado = context.getString(R.string.fixed_fee);
+                this.descEstado = context.getString(R.string.fragment_filter_cb_fixed_fee);
                 break;
             case "Pendiente de pago":
                 this.textColor = RED;
-                this.descEstado = context.getString(R.string.pending_payment);
+                this.descEstado = context.getString(R.string.fragment_filter_cb_pending_payment);
                 break;
             case "Plan de pago":
-                this.descEstado = context.getString(R.string.payment_plan);
+                this.descEstado = context.getString(R.string.fragment_filter_cb_payment_plan);
                 break;
             default:
                 this.descEstado = "";

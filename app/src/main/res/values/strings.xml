@@ -1,21 +1,25 @@
 <resources>
     <string name="app_name">Invoices</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="filter_invoices">Filter invoices</string>
-    <string name="invoices_state">Invoices state</string>
-    <string name="close_filters">Close filters</string>
-    <string name="to">To:</string>
-    <string name="by_amount">By amount</string>
-    <string name="by_state">By state</string>
-    <string name="date_of_issue">By date of issue</string>
-    <string name="from">From:</string>
-    <string name="dd_MM_yy">day/month/year</string>
-    <string name="paid">Paid</string>
-    <string name="pending_payment">Pending payment</string>
-    <string name="payment_plan">Payment plan</string>
-    <string name="fixed_fee">Fixed fee</string>
-    <string name="canceled">Canceled</string>
-    <string name="erase">Erase filters</string>
-    <string name="filter">Apply filters</string>
-    <string name="not_found">No invoices found</string>
+
+    <!-- general -->
+    <string name="general_dd_MM_yy">day/month/year</string>
+
+    <!-- activity_main -->
+    <string name="activity_main_tv_not_found">No invoices found</string>
+
+    <!-- fragment_filter -->
+    <string name="fragment_filter_tv_filter_invoices">Filter invoices</string>
+    <string name="fragment_filter_tv_date_of_issue">By date of issue</string>
+    <string name="fragment_filter_tv_from">From:</string>
+    <string name="fragment_filter_tv_to">To:</string>
+    <string name="fragment_filter_tv_by_amount">By amount</string>
+    <string name="fragment_filter_tv_by_state">By state</string>
+    <string name="fragment_filter_cb_paid">Paid</string>
+    <string name="fragment_filter_cb_pending_payment">Pending payment</string>
+    <string name="fragment_filter_cb_payment_plan">Payment plan</string>
+    <string name="fragment_filter_cb_fixed_fee">Fixed fee</string>
+    <string name="fragment_filter_cb_canceled">Canceled</string>
+    <string name="fragment_filter_btn_erase">Erase filters</string>
+    <string name="fragment_filter_btn_filter">Apply filters</string>
+    <string name="fragment_filter_btn_description_close_filters">Close filters</string>
 </resources>

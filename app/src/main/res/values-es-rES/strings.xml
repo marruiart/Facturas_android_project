@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Facturas</string>
-    <string name="filter_invoices">Filtrar facturas</string>
-    <string name="invoices_state">Estado de la factura</string>
-    <string name="close_filters">Cerrar filtros</string>
-    <string name="to">Hasta:</string>
-    <string name="by_amount">Por un importe</string>
-    <string name="by_state">Por estado</string>
-    <string name="date_of_issue">Con fecha de emisión</string>
-    <string name="from">Desde:</string>
-    <string name="dd_MM_yy">día/mes/año</string>
-    <string name="paid">Pagada</string>
-    <string name="pending_payment">Pendiente de pago</string>
-    <string name="payment_plan">Plan de pago</string>
-    <string name="fixed_fee">Cuota fija</string>
-    <string name="canceled">Anulada</string>
-    <string name="erase">Borrar filtros</string>
-    <string name="filter">Aplicar filtros</string>
-    <string name="not_found">No se encontraron facturas</string>
+    <string name="fragment_filter_tv_filter_invoices">Filtrar facturas</string>
+    <string name="fragment_filter_btn_description_close_filters">Cerrar filtros</string>
+    <string name="fragment_filter_tv_to">Hasta:</string>
+    <string name="fragment_filter_tv_by_amount">Por un importe</string>
+    <string name="fragment_filter_tv_by_state">Por estado</string>
+    <string name="fragment_filter_tv_date_of_issue">Con fecha de emisión</string>
+    <string name="fragment_filter_tv_from">Desde:</string>
+    <string name="general_dd_MM_yy">día/mes/año</string>
+    <string name="fragment_filter_cb_paid">Pagada</string>
+    <string name="fragment_filter_cb_pending_payment">Pendiente de pago</string>
+    <string name="fragment_filter_cb_payment_plan">Plan de pago</string>
+    <string name="fragment_filter_cb_fixed_fee">Cuota fija</string>
+    <string name="fragment_filter_cb_canceled">Anulada</string>
+    <string name="fragment_filter_btn_erase">Borrar filtros</string>
+    <string name="fragment_filter_btn_filter">Aplicar filtros</string>
+    <string name="activity_main_tv_not_found">No se encontraron facturas</string>
 </resources>

@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class InvoicesJsonApiAdapter {
     private static InvoicesJsonApiService API_SERVICE;
-    private static final String BASE_URL = "https://viewnextandroid.wiremockapi.cloud/";
+    private static final String BASE_URL = "https://viewnextandroid.mocklab.io/";
     public List<InvoiceVO> invoicesList = new ArrayList<>();
 
     public static InvoicesJsonApiService getApiService() {

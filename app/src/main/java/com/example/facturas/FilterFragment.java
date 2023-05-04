@@ -177,10 +177,10 @@ public class FilterFragment extends Fragment
     private void resetDatePickers() {
         filter.setDateIssuedFrom(new Date(0));
         Button btnPickerFrom = getView().findViewById(R.id.btn_pickerFrom);
-        btnPickerFrom.setText(getResources().getString(R.string.dd_MM_yy));
+        btnPickerFrom.setText(getResources().getString(R.string.general_dd_MM_yy));
         filter.setDateIssuedTo(new Date());
         Button btnPickerTo = getView().findViewById(R.id.btn_pickerTo);
-        btnPickerTo.setText(getResources().getString(R.string.dd_MM_yy));
+        btnPickerTo.setText(getResources().getString(R.string.general_dd_MM_yy));
         Log.d("resetDatePickers", "datePickers reset");
     }
 
@@ -211,11 +211,6 @@ public class FilterFragment extends Fragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -232,11 +227,6 @@ public class FilterFragment extends Fragment
         setSeekbarStatus(view);
         setClickListeners(view);
         return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
