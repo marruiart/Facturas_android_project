@@ -10,29 +10,24 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class FilterFragment extends Fragment
-        implements SeekBar.OnSeekBarChangeListener,
-        CompoundButton.OnCheckedChangeListener,
-        DatePickerDialog.OnDateSetListener,
-        View.OnClickListener {
-    private static FilterDataVO filter = null;
+public class FilterFragment extends Fragment {
+    private FilterDataVO filter = null;
     private ArrayList<InvoiceVO> retrievedList;
-    private int mSelectedButtonId;
     private OnDataPassListener activityCallback;
 
     public FilterFragment() {
@@ -41,7 +36,36 @@ public class FilterFragment extends Fragment
 
     public interface OnDataPassListener {
         void onFilterApply(ArrayList<InvoiceVO> filteredInvoicesList);
+
         void onFilterClose();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_filter, container, false);
+        retrieveInvoiceList();
+        if (filter == null) {
+            filter = FilterDataVO.getInstance();
+            findAllCheckboxes((ViewGroup) view.getRootView());
+        } else {
+            setDatePickersStatus(view);
+            setStateCheckboxesStatus(view);
+        }
+        findMaxRangeAmount();
+        setSeekbarStatus(view);
+        setClickListeners(view);
+        return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context activity) {
+        super.onAttach(activity);
+        try {
+            activityCallback = (OnDataPassListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity + " must implement ToolbarListener");
+        }
     }
 
     private void retrieveInvoiceList() {
@@ -51,31 +75,45 @@ public class FilterFragment extends Fragment
         retrievedList = bundle.getParcelableArrayList("invoicesList");
     }
 
-    private void findMaxRangeAmount() {
-        for (InvoiceVO invoice : retrievedList) {
-            if (invoice.getImporteOrdenacion() > filter.getMaxRangeAmount())
-                filter.setMaxRangeAmount((int) Math.ceil(invoice.getImporteOrdenacion()));
-        }
+    private Date getCalendarDate(Calendar calendar, int year, int month, int dayOfMonth) {
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        return calendar.getTime();
+    }
+
+    private int getCurrentDateFromCalendar(final int YEAR_MONTH_OR_DAY) {
+        final Calendar calendar = Calendar.getInstance();
+        return calendar.get(YEAR_MONTH_OR_DAY);
     }
 
     private void setClickListeners(View view) {
-        ((SeekBar) view.findViewById(R.id.seekBar_amount)).setOnSeekBarChangeListener(this);
-        view.findViewById(R.id.btn_pickerFrom).setOnClickListener(this);
-        view.findViewById(R.id.btn_pickerTo).setOnClickListener(this);
-        view.findViewById(R.id.btn_apply).setOnClickListener(this);
-        view.findViewById(R.id.btn_close).setOnClickListener(this);
-        view.findViewById(R.id.btn_erase).setOnClickListener(this);
-        for (Map.Entry<Integer, Boolean> set : filter.getState().entrySet()) {
-            CheckBox c = view.findViewById(set.getKey());
-            c.setOnCheckedChangeListener(this);
+        Button fromDateBtn;
+        Button toDateBtn;
+
+        setSeekBarListener(view);
+        fromDateBtn = view.findViewById(R.id.btn_pickerFrom);
+        setDateButtonListener(fromDateBtn);
+        toDateBtn = view.findViewById(R.id.btn_pickerTo);
+        setDateButtonListener(toDateBtn);
+        setApplyButtonListener(view);
+        setCloseButtonListener(view);
+        setResetButtonListener(view);
+        HashMap<Integer, Boolean> allStateCheckboxes = filter.getState();
+        for (Map.Entry<Integer, Boolean> set : allStateCheckboxes.entrySet()) {
+            CheckBox stateCheckbox = view.findViewById(set.getKey());
+            stateCheckbox.setOnCheckedChangeListener((checkBoxView, isChecked) -> updateCheckboxStatus(checkBoxView, isChecked));
         }
     }
 
+    // DatePickers related methods
     private void setDatePickersStatus(View view) {
+        String dateStr;
         Date originDate = new Date(0);
         Date now = new Date();
-        String dateStr;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+
+        // TODO check changing this to changeDateButtonText
+        SimpleDateFormat dateFormat = new SimpleDateFormat(MyConstants.DATE_FORMAT, Locale.getDefault());
         if (!originDate.equals(filter.getDateIssuedFrom())) {
             dateStr = dateFormat.format(filter.getDateIssuedFrom());
             ((Button) view.findViewById(R.id.btn_pickerFrom)).setText(dateStr);
@@ -86,10 +124,71 @@ public class FilterFragment extends Fragment
         }
     }
 
-    private void setStateCheckboxesStatus(View view) {
-        for (Map.Entry<Integer, Boolean> set : filter.getState().entrySet()) {
-            CheckBox c = view.findViewById(set.getKey());
-            c.setChecked(set.getValue());
+    private void setDateButtonListener(Button button) {
+        // Create listener that change button text on date set
+        if (button != null) {
+            DatePickerDialog.OnDateSetListener listener = createDateButtonListener(button);
+            button.setOnClickListener(btnView -> showDatePickerDialog(listener));
+        } else {
+            Log.d("setDateButtonListener", "Null button");
+        }
+    }
+
+    private DatePickerDialog.OnDateSetListener createDateButtonListener(Button clickedBtn) {
+        return (view, year, month, dayOfMonth) -> changeDateButtonText(year, month, dayOfMonth, clickedBtn);
+    }
+
+    private void changeDateButtonText(int year, int month, int dayOfMonth, Button clickedBtn) {
+        // Set picked date
+        Date date = getCalendarDate(Calendar.getInstance(), year, month, dayOfMonth);
+        String dateStr = new SimpleDateFormat(MyConstants.DATE_FORMAT, Locale.getDefault()).format(date);
+        clickedBtn.setText(dateStr);
+    }
+
+    private void showDatePickerDialog(DatePickerDialog.OnDateSetListener listener) {
+        int currentYear = getCurrentDateFromCalendar(Calendar.YEAR);
+        int currentMonth = getCurrentDateFromCalendar(Calendar.MONTH);
+        int currentDay = getCurrentDateFromCalendar(Calendar.DAY_OF_MONTH);
+
+        // Show DatePickerDialog
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), listener, currentYear, currentMonth, currentDay);
+        datePickerDialog.show();
+    }
+
+
+    // SeekBar related methods
+    private void findMaxRangeAmount() {
+        for (InvoiceVO invoice : retrievedList) {
+            if (invoice.getImporteOrdenacion() > filter.getMaxRangeAmount()) {
+                filter.setMaxRangeAmount((int) Math.ceil(invoice.getImporteOrdenacion()));
+            }
+        }
+    }
+
+    private void setSeekBarListener(View view) {
+        SeekBar amountSeekbar;
+        amountSeekbar = view.findViewById(R.id.seekBar_amount);
+        if (amountSeekbar != null) {
+            amountSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    filter.setAmountProgress(progress);
+                    Log.d("SeekBar", "New max in range: " + progress);
+                    setFilteredRangeTextview(getView());
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    // OnSeekBarChangeListener interface method
+                    Log.d("onStartTrackingTouch", FilterFragment.this.getClass().toString());
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    // OnSeekBarChangeListener interface method
+                    Log.d("onStopTrackingTouch", FilterFragment.this.getClass().toString());
+                }
+            });
         }
     }
 
@@ -110,19 +209,20 @@ public class FilterFragment extends Fragment
 
     private void setSeekBarProgress(SeekBar amountSeekbar) {
         int progress = filter.getAmountProgress();
-        if (progress == 0 || progress > filter.getMaxRangeAmount())
+        if (progress == 0 || progress > filter.getMaxRangeAmount()) {
             filter.setAmountProgress(filter.getMaxRangeAmount());
+        }
         amountSeekbar.setProgress(filter.getAmountProgress());
     }
 
     private void setFilteredRangeTextview(View view) {
         if (view != null) {
             TextView filteredRangeTv = view.findViewById(R.id.textView_filteredRange);
-            filteredRangeTv.setText(String.format("%d €   -   %d €",
-                    filter.getMinRangeAmount(), filter.getAmountProgress()));
+            filteredRangeTv.setText(String.format("%d €   -   %d €", filter.getMinRangeAmount(), filter.getAmountProgress()));
         }
     }
 
+    // CheckBox related methods
     private void findAllCheckboxes(ViewGroup viewGroup) {
         int childCount = viewGroup.getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -130,11 +230,31 @@ public class FilterFragment extends Fragment
             int id = child.getId();
             if (child instanceof CheckBox && id != View.NO_ID) {
                 String idString = getResources().getResourceEntryName(id);
-                if (idString.contains("checkBox")) {
-                    if (filter.getState().get(id) == null)
-                        filter.putStateCheckbox(id, ((CheckBox) child).isChecked());
+                if (idString.contains("checkBox") && filter.getState().get(id) == null) {
+                    filter.putStateCheckbox(id, ((CheckBox) child).isChecked());
                 }
             }
+        }
+    }
+
+    private void setStateCheckboxesStatus(View view) {
+        for (Map.Entry<Integer, Boolean> set : filter.getState().entrySet()) {
+            CheckBox c = view.findViewById(set.getKey());
+            c.setChecked(set.getValue());
+        }
+    }
+
+    private void updateCheckboxStatus(CompoundButton view, boolean isChecked) {
+        String idString = getResources().getResourceEntryName(view.getId());
+        filter.putStateCheckbox(view.getId(), view.isChecked());
+        Log.d(idString, "Checked: " + isChecked);
+    }
+
+    // Apply filter methods
+    private void setApplyButtonListener(View view) {
+        Button applyButton = view.findViewById(R.id.btn_apply);
+        if (applyButton != null) {
+            applyButton.setOnClickListener(applyBtn -> applyFilter());
         }
     }
 
@@ -144,10 +264,6 @@ public class FilterFragment extends Fragment
         applyAmountFilter(filteredInvoicesList);
         applyStateFilter(filteredInvoicesList);
         activityCallback.onFilterApply(filteredInvoicesList);
-    }
-
-    private void closeFilter() {
-        activityCallback.onFilterClose();
     }
 
     private void applyDateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
@@ -160,10 +276,19 @@ public class FilterFragment extends Fragment
     }
 
     private void applyStateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
+        //TODO two checks must remove the rest, not show none
         for (Map.Entry<Integer, Boolean> state : filter.getState().entrySet()) {
             CheckBox c = getView().findViewById(state.getKey());
             String checkboxText = (String) c.getText();
             filteredInvoicesList.removeIf(i -> state.getValue() && !i.getDescEstado().equals(checkboxText));
+        }
+    }
+
+    // Reset filter methods
+    private void setResetButtonListener(View view) {
+        Button resetButton = view.findViewById(R.id.btn_erase);
+        if (resetButton != null) {
+            resetButton.setOnClickListener(eraseBtn -> resetFilters());
         }
     }
 
@@ -200,99 +325,15 @@ public class FilterFragment extends Fragment
         Log.d("resetAllCheckboxes", "CheckBoxes reset");
     }
 
-    @Override
-    public void onAttach(@NonNull Context activity) {
-        super.onAttach(activity);
-        try {
-            activityCallback = (OnDataPassListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity + " must implement ToolbarListener");
+    // Close button methods
+    private void setCloseButtonListener(View view) {
+        ImageButton closeButton = view.findViewById(R.id.btn_close);
+        if (closeButton != null) {
+            closeButton.setOnClickListener(closeBtn -> closeFilter());
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_filter, container, false);
-        retrieveInvoiceList();
-        if (filter == null) {
-            filter = FilterDataVO.getInstance();
-            findAllCheckboxes((ViewGroup) view.getRootView());
-        } else {
-            setDatePickersStatus(view);
-            setStateCheckboxesStatus(view);
-        }
-        findMaxRangeAmount();
-        setSeekbarStatus(view);
-        setClickListeners(view);
-        return view;
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton view, boolean isChecked) {
-        String idString = getResources().getResourceEntryName(view.getId());
-        filter.putStateCheckbox(view.getId(), view.isChecked());
-        Log.d(idString, "Checked: " + isChecked);
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        filter.setAmountProgress(progress);
-        Log.d("SeekBar", "New max in range: " + progress);
-        setFilteredRangeTextview(getView());
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        // OnSeekBarChangeListener interface method
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        // OnSeekBarChangeListener interface method
-    }
-
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int day) {
-        // Establish picked date
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-        Date date = calendar.getTime();
-
-        String dateStr = new SimpleDateFormat("dd MMM yyyy").format(date);
-        if (mSelectedButtonId == R.id.btn_pickerFrom) {
-            filter.setDateIssuedFrom(date);
-            ((Button) getView().findViewById(R.id.btn_pickerFrom)).setText(dateStr);
-        } else if (mSelectedButtonId == R.id.btn_pickerTo) {
-            filter.setDateIssuedTo(date);
-            ((Button) getView().findViewById(R.id.btn_pickerTo)).setText(dateStr);
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.btn_pickerFrom || v.getId() == R.id.btn_pickerTo) {
-            mSelectedButtonId = v.getId();
-
-            // Get current date
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Show DatePickerDialog
-            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
-                    this, year, month, day);
-            datePickerDialog.show();
-        } else if (v.getId() == R.id.btn_erase) {
-            resetFilters();
-        } else if (v.getId() == R.id.btn_apply) {
-            applyFilter();
-        } else if (v.getId() == R.id.btn_close) {
-            closeFilter();
-        }
+    private void closeFilter() {
+        activityCallback.onFilterClose();
     }
 }
