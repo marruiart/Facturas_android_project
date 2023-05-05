@@ -2,6 +2,7 @@ package com.example.facturas;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,7 +73,7 @@ public class FilterFragment extends Fragment {
         // Get the ArrayList from the Bundle
         Bundle bundle = getArguments();
         assert bundle != null;
-        retrievedList = bundle.getParcelableArrayList("invoicesList");
+        retrievedList = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ? bundle.getParcelableArrayList("invoicesList", InvoiceVO.class) : bundle.getParcelableArrayList("invoicesList");
     }
 
     private Date getCalendarDate(Calendar calendar, int year, int month, int dayOfMonth) {
@@ -102,7 +103,7 @@ public class FilterFragment extends Fragment {
         HashMap<Integer, Boolean> allStateCheckboxes = filter.getState();
         for (Map.Entry<Integer, Boolean> set : allStateCheckboxes.entrySet()) {
             CheckBox stateCheckbox = view.findViewById(set.getKey());
-            stateCheckbox.setOnCheckedChangeListener((checkBoxView, isChecked) -> updateCheckboxStatus(checkBoxView, isChecked));
+            stateCheckbox.setOnCheckedChangeListener(this::updateCheckboxStatus);
         }
     }
 
@@ -278,9 +279,13 @@ public class FilterFragment extends Fragment {
     private void applyStateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
         //TODO two checks must remove the rest, not show none
         for (Map.Entry<Integer, Boolean> state : filter.getState().entrySet()) {
-            CheckBox c = getView().findViewById(state.getKey());
-            String checkboxText = (String) c.getText();
-            filteredInvoicesList.removeIf(i -> state.getValue() && !i.getDescEstado().equals(checkboxText));
+            CheckBox stateCheckbox = getView().findViewById(state.getKey());
+            if (stateCheckbox != null) {
+                String checkboxText = (String) stateCheckbox.getText();
+                filteredInvoicesList.removeIf(i -> state.getValue() && !i.getDescEstado().equals(checkboxText));
+            } else {
+                Log.d("applyStateFilter", "null stateCheckbox");
+            }
         }
     }
 
@@ -301,26 +306,40 @@ public class FilterFragment extends Fragment {
 
     private void resetDatePickers() {
         filter.setDateIssuedFrom(new Date(0));
-        Button btnPickerFrom = getView().findViewById(R.id.btn_pickerFrom);
-        btnPickerFrom.setText(getResources().getString(R.string.general_dd_MM_yy));
+        resetDateButton(R.id.btn_pickerFrom);
         filter.setDateIssuedTo(new Date());
-        Button btnPickerTo = getView().findViewById(R.id.btn_pickerTo);
-        btnPickerTo.setText(getResources().getString(R.string.general_dd_MM_yy));
-        Log.d("resetDatePickers", "datePickers reset");
+        resetDateButton(R.id.btn_pickerTo);
+    }
+
+    private void resetDateButton(int id) {
+        Button btnPicker = getView().findViewById(id);
+        if (btnPicker != null) {
+            btnPicker.setText(getResources().getString(R.string.general_dd_MM_yy));
+        } else {
+            Log.d("resetDateButton", "null btnPicker");
+        }
     }
 
     private void resetSeekbarAmount() {
+        SeekBar amountSeekbar;
         filter.setMaxRangeAmount(filter.getMaxRangeAmount());
         filter.setAmountProgress(filter.getMaxRangeAmount());
-        ((SeekBar) getView().findViewById(R.id.seekBar_amount)).setProgress(filter.getAmountProgress());
-        Log.d("resetSeekbarAmount", "SeekBar reset");
+        amountSeekbar = getView().findViewById(R.id.seekBar_amount);
+        if (amountSeekbar != null) {
+            amountSeekbar.setProgress(filter.getAmountProgress());
+            Log.d("resetSeekbarAmount", "SeekBar reset");
+        } else {
+            Log.d("resetSeekbarAmount", "null amountSeekbar");
+        }
     }
 
     private void resetAllCheckboxes() {
         for (Map.Entry<Integer, Boolean> state : filter.getState().entrySet()) {
-            CheckBox c = getView().findViewById(state.getKey());
-            c.setChecked(false);
-            state.setValue(false);
+            CheckBox stateCheckbox = getView().findViewById(state.getKey());
+            if (stateCheckbox != null) {
+                stateCheckbox.setChecked(false);
+                state.setValue(false);
+            }
         }
         Log.d("resetAllCheckboxes", "CheckBoxes reset");
     }
