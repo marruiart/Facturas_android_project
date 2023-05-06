@@ -20,49 +20,33 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements FilterFragment.OnDataPassListener, InvoicesRecyclerAdapter.RecyclerOnClickListener {
     private static final String FRAGMENT_TAG = "FILTER_FRAGMENT";
-    private RecyclerView mRecyclerView;
     private ArrayList<InvoiceVO> invoicesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRecyclerView = findViewById(R.id.recyclerView_invoices);
+        // Inicialize activity
+        init();
+    }
+
+    private void init() {
+        // Set layout for the RecyclerView
         setLayoutManager();
+        // Callback to get the list of invoices and initialize the RecyclerView
         enqueueInvoices();
     }
 
-    public void openFilterFragment(View v) {
-        showNotFoundMessage(View.GONE);
-        FilterFragment filterFragment = new FilterFragment();
-        Bundle passedData = new Bundle();
-        passedData.putParcelableArrayList("invoicesList", invoicesList);
-        filterFragment.setArguments(passedData);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragmentContainerView, filterFragment, FRAGMENT_TAG)
-                .commit();
-    }
-
-    private void showNotFoundMessage(int visibility) {
-        TextView notFound = findViewById(R.id.invoice_not_found);
-        notFound.setVisibility(visibility);
-    }
-
     private void setLayoutManager() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(layoutManager);
-    }
+        RecyclerView mRecyclerView;
+        LinearLayoutManager layoutManager;
 
-    private void initializeAdapter(ArrayList<InvoiceVO> filteredInvoicesList) {
-        InvoicesRecyclerAdapter adapter = new InvoicesRecyclerAdapter(filteredInvoicesList);
-        adapter.setOnItemClickListener(this);
-        mRecyclerView.setAdapter(adapter);
-    }
-
-    private void initializeAdapter() {
-        initializeAdapter(invoicesList);
+        mRecyclerView = findViewById(R.id.recyclerView_invoices);
+        if (mRecyclerView != null) {
+            layoutManager = new LinearLayoutManager(MainActivity.this);
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(layoutManager);
+        }
     }
 
     public void enqueueInvoices() {
@@ -79,26 +63,60 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             invoice.setDescEstado(invoice.getDescEstado());
                         }
                         Log.d("onResponse invoices", "Size of 'facturas' list: " + invoicesList.size());
-                        initializeAdapter();
+                        initializeRecyclerViewAdapter();
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<InvoicesApiResponse> call, Throwable t) {
-                String error = t.getMessage();
+                String error = t.getLocalizedMessage();
                 Log.d("onFailure error message", error);
             }
         });
     }
 
+    private void initializeRecyclerViewAdapter() {
+        initializeRecyclerViewAdapter(invoicesList);
+    }
+
+    private void initializeRecyclerViewAdapter(ArrayList<InvoiceVO> invoicesList) {
+        RecyclerView mRecyclerView;
+        InvoicesRecyclerAdapter adapter;
+
+        adapter = new InvoicesRecyclerAdapter(invoicesList);
+        adapter.setOnItemClickListener(this);
+        mRecyclerView = findViewById(R.id.recyclerView_invoices);
+        if (mRecyclerView != null) {
+            mRecyclerView.setAdapter(adapter);
+        }
+    }
+
+    private void showNotFoundMessage(int visibility) {
+        TextView notFound = findViewById(R.id.invoice_not_found);
+        notFound.setVisibility(visibility);
+    }
+
+    public void openFilterFragment(View v) {
+        FilterFragment filterFragment = new FilterFragment();
+        Bundle passedData = new Bundle();
+        // Hide no invoices found message
+        showNotFoundMessage(View.GONE);
+        passedData.putParcelableArrayList("invoicesList", invoicesList);
+        filterFragment.setArguments(passedData);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainerView, filterFragment, FRAGMENT_TAG)
+                .commit();
+    }
+
     @Override
     public void onFilterApply(ArrayList<InvoiceVO> filteredInvoicesList) {
         onFilterClose();
-        if (filteredInvoicesList.size() == 0) {
+        if (filteredInvoicesList.isEmpty()) {
             showNotFoundMessage(View.VISIBLE);
         }
-        initializeAdapter(filteredInvoicesList);
+        initializeRecyclerViewAdapter(filteredInvoicesList);
         Log.d("filterApplied", String.format("Original size: %d  Filtered size: %d", invoicesList.size(), filteredInvoicesList.size()));
     }
 
