@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -109,19 +110,25 @@ public class FilterFragment extends Fragment {
 
     // DatePickers related methods
     private void setDatePickersStatus(View view) {
+        SimpleDateFormat dateFormat;
         String dateStr;
         Date originDate = new Date(0);
         Date now = new Date();
 
-        // TODO check changing this to changeDateButtonText
-        SimpleDateFormat dateFormat = new SimpleDateFormat(MyConstants.DATE_FORMAT, Locale.getDefault());
+        dateFormat = new SimpleDateFormat(MyConstants.DATE_FORMAT, Locale.getDefault());
         if (!originDate.equals(filter.getDateIssuedFrom())) {
             dateStr = dateFormat.format(filter.getDateIssuedFrom());
-            ((Button) view.findViewById(R.id.btn_pickerFrom)).setText(dateStr);
+            Button btnPickerFrom = view.findViewById(R.id.btn_pickerFrom);
+            if (btnPickerFrom != null) {
+                btnPickerFrom.setText(dateStr);
+            }
         }
         if (!now.equals(filter.getDateIssuedTo())) {
             dateStr = dateFormat.format(filter.getDateIssuedTo());
-            ((Button) view.findViewById(R.id.btn_pickerTo)).setText(dateStr);
+            Button btnPickerTo = view.findViewById(R.id.btn_pickerFrom);
+            if (btnPickerTo != null) {
+                btnPickerTo.setText(dateStr);
+            }
         }
     }
 
@@ -136,12 +143,19 @@ public class FilterFragment extends Fragment {
     }
 
     private DatePickerDialog.OnDateSetListener createDateButtonListener(Button clickedBtn) {
-        return (view, year, month, dayOfMonth) -> changeDateButtonText(year, month, dayOfMonth, clickedBtn);
+        return (view, year, month, dayOfMonth) -> {
+            Date date = getCalendarDate(Calendar.getInstance(), year, month, dayOfMonth);
+            if (clickedBtn.getId() == R.id.btn_pickerFrom) {
+                filter.setDateIssuedFrom(date);
+            } else if (clickedBtn.getId() == R.id.btn_pickerTo) {
+                filter.setDateIssuedTo(date);
+            }
+            changeDateButtonText(date, clickedBtn);
+        };
     }
 
-    private void changeDateButtonText(int year, int month, int dayOfMonth, Button clickedBtn) {
+    private void changeDateButtonText(Date date, Button clickedBtn) {
         // Set picked date
-        Date date = getCalendarDate(Calendar.getInstance(), year, month, dayOfMonth);
         String dateStr = new SimpleDateFormat(MyConstants.DATE_FORMAT, Locale.getDefault()).format(date);
         clickedBtn.setText(dateStr);
     }
@@ -268,6 +282,9 @@ public class FilterFragment extends Fragment {
     }
 
     private void applyDateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
+        for (InvoiceVO invoice : filteredInvoicesList) {
+            invoice.getFecha();
+        }
         filteredInvoicesList.removeIf(i -> i.getFecha().before(filter.getDateIssuedFrom()));
         filteredInvoicesList.removeIf(i -> i.getFecha().after(filter.getDateIssuedTo()));
     }
