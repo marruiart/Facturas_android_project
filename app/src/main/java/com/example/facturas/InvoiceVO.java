@@ -10,7 +10,7 @@ import android.os.Parcelable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class InvoiceVO implements Parcelable {
+public final class InvoiceVO implements Parcelable {
     private String descEstado;
     private Float importeOrdenacion;
     private Date fecha;
@@ -38,20 +38,20 @@ public class InvoiceVO implements Parcelable {
         Resources context = App.getContext().getResources();
         this.textColor = BLACK;
         switch (descEstado) {
-            case "Pagada":
+            case MyConstants.INVOICE_DESC_ESTADO_PAGADA:
                 this.descEstado = context.getString(R.string.fragment_filter_cb_paid);
                 break;
-            case "Anulada":
+            case MyConstants.INVOICE_DESC_ESTADO_ANULADA:
                 this.descEstado = context.getString(R.string.fragment_filter_cb_canceled);
                 break;
-            case "Cuota fija":
+            case MyConstants.INVOICE_DESC_ESTADO_CUOTA_FIJA:
                 this.descEstado = context.getString(R.string.fragment_filter_cb_fixed_fee);
                 break;
-            case "Pendiente de pago":
+            case MyConstants.INVOICE_DESC_ESTADO_PENDIENTE:
                 this.textColor = RED;
                 this.descEstado = context.getString(R.string.fragment_filter_cb_pending_payment);
                 break;
-            case "Plan de pago":
+            case MyConstants.INVOICE_DESC_ESTADO_PLAN_PAGO:
                 this.descEstado = context.getString(R.string.fragment_filter_cb_payment_plan);
                 break;
             default:
