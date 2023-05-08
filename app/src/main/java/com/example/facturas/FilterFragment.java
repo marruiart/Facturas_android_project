@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -37,7 +36,7 @@ public class FilterFragment extends Fragment {
     }
 
     public interface OnDataPassListener {
-        void onFilterApply(ArrayList<InvoiceVO> filteredInvoicesList);
+        void onFilterApply(ArrayList<InvoiceVO> filteredInvoicesList, FilterDataVO filter);
 
         void onFilterClose();
     }
@@ -46,9 +45,8 @@ public class FilterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
-        retrieveInvoiceList();
-        if (filter == null) {
-            filter = FilterDataVO.getInstance();
+        retrievePassedData();
+        if (filter.getState().isEmpty()) {
             findAllCheckboxes((ViewGroup) view.getRootView());
         } else {
             setDatePickersStatus(view);
@@ -70,11 +68,18 @@ public class FilterFragment extends Fragment {
         }
     }
 
-    private void retrieveInvoiceList() {
-        // Get the ArrayList from the Bundle
+    private void retrievePassedData() {
         Bundle bundle = getArguments();
         assert bundle != null;
-        retrievedList = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ? bundle.getParcelableArrayList("invoicesList", InvoiceVO.class) : bundle.getParcelableArrayList("invoicesList");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Get the ArrayList from the Bundle
+            retrievedList = bundle.getParcelableArrayList("invoicesList", InvoiceVO.class);
+            // Get the filter from the Bundle
+            filter = bundle.getParcelable("filter", FilterDataVO.class);
+        } else {
+            retrievedList = bundle.getParcelableArrayList("invoicesList");
+            filter = bundle.getParcelable("filter");
+        }
     }
 
     private Date getCalendarDate(Calendar calendar, int year, int month, int dayOfMonth) {
@@ -92,6 +97,7 @@ public class FilterFragment extends Fragment {
     private void setClickListeners(View view) {
         Button fromDateBtn;
         Button toDateBtn;
+        HashMap<Integer, Boolean> allStateCheckboxes;
 
         setSeekBarListener(view);
         fromDateBtn = view.findViewById(R.id.btn_pickerFrom);
@@ -101,7 +107,7 @@ public class FilterFragment extends Fragment {
         setApplyButtonListener(view);
         setCloseButtonListener(view);
         setResetButtonListener(view);
-        HashMap<Integer, Boolean> allStateCheckboxes = filter.getState();
+        allStateCheckboxes = filter.getState();
         for (Map.Entry<Integer, Boolean> set : allStateCheckboxes.entrySet()) {
             CheckBox stateCheckbox = view.findViewById(set.getKey());
             stateCheckbox.setOnCheckedChangeListener(this::updateCheckboxStatus);
@@ -125,7 +131,7 @@ public class FilterFragment extends Fragment {
         }
         if (!now.equals(filter.getDateIssuedTo())) {
             dateStr = dateFormat.format(filter.getDateIssuedTo());
-            Button btnPickerTo = view.findViewById(R.id.btn_pickerFrom);
+            Button btnPickerTo = view.findViewById(R.id.btn_pickerTo);
             if (btnPickerTo != null) {
                 btnPickerTo.setText(dateStr);
             }
@@ -277,14 +283,11 @@ public class FilterFragment extends Fragment {
         ArrayList<InvoiceVO> filteredInvoicesList = (ArrayList<InvoiceVO>) retrievedList.clone();
         applyDateFilter(filteredInvoicesList);
         applyAmountFilter(filteredInvoicesList);
-        applyStateFilter(filteredInvoicesList);
-        activityCallback.onFilterApply(filteredInvoicesList);
+        filteredInvoicesList = applyStateFilter(filteredInvoicesList);
+        activityCallback.onFilterApply(filteredInvoicesList, filter);
     }
 
     private void applyDateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
-        for (InvoiceVO invoice : filteredInvoicesList) {
-            invoice.getFecha();
-        }
         filteredInvoicesList.removeIf(i -> i.getFecha().before(filter.getDateIssuedFrom()));
         filteredInvoicesList.removeIf(i -> i.getFecha().after(filter.getDateIssuedTo()));
     }
@@ -293,17 +296,24 @@ public class FilterFragment extends Fragment {
         filteredInvoicesList.removeIf(i -> i.getImporteOrdenacion() > filter.getAmountProgress());
     }
 
-    private void applyStateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
-        //TODO two checks must remove the rest, not show none
+    private ArrayList<InvoiceVO> applyStateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
+        ArrayList<InvoiceVO> newFilteredInvoiceList = new ArrayList<>();
+        boolean filterApplied = false;
         for (Map.Entry<Integer, Boolean> state : filter.getState().entrySet()) {
-            CheckBox stateCheckbox = getView().findViewById(state.getKey());
-            if (stateCheckbox != null) {
-                String checkboxText = (String) stateCheckbox.getText();
-                filteredInvoicesList.removeIf(i -> state.getValue() && !i.getDescEstado().equals(checkboxText));
-            } else {
-                Log.d("applyStateFilter", "null stateCheckbox");
+            if (Boolean.TRUE.equals(state.getValue())) {
+                ArrayList<InvoiceVO> tmpList = (ArrayList<InvoiceVO>) filteredInvoicesList.clone();
+                CheckBox stateCheckbox = getView().findViewById(state.getKey());
+                if (stateCheckbox != null) {
+                    String checkboxText = (String) stateCheckbox.getText();
+                    tmpList.removeIf(invoice -> !invoice.getDescEstado().equals(checkboxText));
+                    newFilteredInvoiceList.addAll(tmpList);
+                    filterApplied = true;
+                } else {
+                    Log.d("applyStateFilter", "null stateCheckbox");
+                }
             }
         }
+        return filterApplied ? newFilteredInvoiceList : filteredInvoicesList;
     }
 
     // Reset filter methods
@@ -315,16 +325,13 @@ public class FilterFragment extends Fragment {
     }
 
     private void resetFilters() {
+        filter.resetInstance(getView());
         resetDatePickers();
         resetSeekbarAmount();
-        resetAllCheckboxes();
-        FilterDataVO.resetInstance();
     }
 
     private void resetDatePickers() {
-        filter.setDateIssuedFrom(new Date(0));
         resetDateButton(R.id.btn_pickerFrom);
-        filter.setDateIssuedTo(new Date());
         resetDateButton(R.id.btn_pickerTo);
     }
 
@@ -339,8 +346,6 @@ public class FilterFragment extends Fragment {
 
     private void resetSeekbarAmount() {
         SeekBar amountSeekbar;
-        filter.setMaxRangeAmount(filter.getMaxRangeAmount());
-        filter.setAmountProgress(filter.getMaxRangeAmount());
         amountSeekbar = getView().findViewById(R.id.seekBar_amount);
         if (amountSeekbar != null) {
             amountSeekbar.setProgress(filter.getAmountProgress());
@@ -348,17 +353,6 @@ public class FilterFragment extends Fragment {
         } else {
             Log.d("resetSeekbarAmount", "null amountSeekbar");
         }
-    }
-
-    private void resetAllCheckboxes() {
-        for (Map.Entry<Integer, Boolean> state : filter.getState().entrySet()) {
-            CheckBox stateCheckbox = getView().findViewById(state.getKey());
-            if (stateCheckbox != null) {
-                stateCheckbox.setChecked(false);
-                state.setValue(false);
-            }
-        }
-        Log.d("resetAllCheckboxes", "CheckBoxes reset");
     }
 
     // Close button methods

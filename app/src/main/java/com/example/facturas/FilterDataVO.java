@@ -1,10 +1,16 @@
 package com.example.facturas;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.view.View;
+import android.widget.CheckBox;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
-public class FilterDataVO {
-    private static FilterDataVO instance = null;
+public class FilterDataVO implements Parcelable {
     private int minRangeAmount;
     private int maxRangeAmount;
     private int amountProgress;
@@ -12,24 +18,23 @@ public class FilterDataVO {
     private Date dateIssuedTo;
     private HashMap<Integer, Boolean> state;
 
-    public FilterDataVO(int minRangeAmount, int maxRangeAmount, int amountProgress, Date dateIssuedFrom, Date dateIssuedTo) {
-        this.minRangeAmount = minRangeAmount;
-        this.maxRangeAmount = maxRangeAmount;
-        this.amountProgress = amountProgress;
-        this.dateIssuedFrom = dateIssuedFrom;
-        this.dateIssuedTo = dateIssuedTo;
+    public FilterDataVO() {
+        this.minRangeAmount = 0;
+        this.maxRangeAmount = 0;
+        this.amountProgress = 0;
+        this.dateIssuedFrom = new Date(0);
+        this.dateIssuedTo = new Date();
         this.state = new HashMap<>();
     }
 
-    public static FilterDataVO getInstance() {
-        if (instance == null) {
-            instance = new FilterDataVO(0, 0, 0, new Date(0), new Date());
+    public void resetInstance(View view) {
+        this.amountProgress = this.maxRangeAmount;
+        this.dateIssuedFrom = new Date(0);
+        this.dateIssuedTo = new Date();
+        for (Map.Entry<Integer, Boolean> set : this.state.entrySet()) {
+            CheckBox c = view.findViewById(set.getKey());
+            c.setChecked(false);
         }
-        return instance;
-    }
-
-    public static void resetInstance() {
-        instance = null;
     }
 
     public int getMinRangeAmount() {
@@ -82,5 +87,41 @@ public class FilterDataVO {
 
     public void putStateCheckbox(Integer id, Boolean isChecked) {
         state.put(id, isChecked);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(minRangeAmount);
+        dest.writeInt(maxRangeAmount);
+        dest.writeInt(amountProgress);
+        dest.writeLong(dateIssuedFrom.getTime());
+        dest.writeLong(dateIssuedTo.getTime());
+        dest.writeSerializable(state);
+    }
+
+    public static final Creator<FilterDataVO> CREATOR = new Creator<FilterDataVO>() {
+        @Override
+        public FilterDataVO createFromParcel(Parcel in) {
+            return new FilterDataVO(in);
+        }
+
+        @Override
+        public FilterDataVO[] newArray(int size) {
+            return new FilterDataVO[size];
+        }
+    };
+
+    private FilterDataVO(Parcel in) {
+        minRangeAmount = in.readInt();
+        maxRangeAmount = in.readInt();
+        amountProgress = in.readInt();
+        dateIssuedFrom = new Date(in.readLong());
+        dateIssuedTo = new Date(in.readLong());
+        state = (HashMap<Integer, Boolean>) in.readSerializable();
     }
 }

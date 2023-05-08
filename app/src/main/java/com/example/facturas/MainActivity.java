@@ -1,11 +1,11 @@
 package com.example.facturas;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -21,20 +21,22 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements FilterFragment.OnDataPassListener, InvoicesRecyclerAdapter.RecyclerOnClickListener {
     private static final String FRAGMENT_TAG = "FILTER_FRAGMENT";
     private ArrayList<InvoiceVO> invoicesList = new ArrayList<>();
+    private FilterDataVO filter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Inicialize activity
-        init();
+        initializeActivity();
     }
 
-    private void init() {
+    private void initializeActivity() {
         // Set layout for the RecyclerView
         setLayoutManager();
-        // Callback to get the list of invoices and initialize the RecyclerView
+        // Callback to get the list of invoices and initialize the RecyclerView adapter
         enqueueInvoices();
+        // Initialize invoice filter
+        initializeFilter();
     }
 
     private void setLayoutManager() {
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         Call<InvoicesApiResponse> call = InvoicesJsonApiAdapter.getApiService().getInvoices();
         call.enqueue(new Callback<InvoicesApiResponse>() {
             @Override
-            public void onResponse(Call<InvoicesApiResponse> call, Response<InvoicesApiResponse> response) {
+            public void onResponse(@NonNull Call<InvoicesApiResponse> call, Response<InvoicesApiResponse> response) {
                 if (response.isSuccessful()) {
                     InvoicesApiResponse apiResponse = response.body();
                     if (apiResponse != null) {
@@ -74,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 Log.d("onFailure error message", error);
             }
         });
+    }
+
+    private void initializeFilter() {
+        filter = new FilterDataVO();
     }
 
     private void initializeRecyclerViewAdapter() {
@@ -98,11 +104,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     public void openFilterFragment(View v) {
+        // TODO onClickListener for this button
         FilterFragment filterFragment = new FilterFragment();
         Bundle passedData = new Bundle();
         // Hide no invoices found message
         showNotFoundMessage(View.GONE);
         passedData.putParcelableArrayList("invoicesList", invoicesList);
+        passedData.putParcelable("filter", filter);
         filterFragment.setArguments(passedData);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -111,11 +119,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     @Override
-    public void onFilterApply(ArrayList<InvoiceVO> filteredInvoicesList) {
+    public void onFilterApply(ArrayList<InvoiceVO> filteredInvoicesList, FilterDataVO filter) {
         onFilterClose();
         if (filteredInvoicesList.isEmpty()) {
             showNotFoundMessage(View.VISIBLE);
         }
+        this.filter = filter;
         initializeRecyclerViewAdapter(filteredInvoicesList);
         Log.d("filterApplied", String.format("Original size: %d  Filtered size: %d", invoicesList.size(), filteredInvoicesList.size()));
     }
@@ -123,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     @Override
     public void onFilterClose() {
         Fragment filterFragment = getSupportFragmentManager()
-                .findFragmentByTag("FILTER_FRAGMENT");
+                .findFragmentByTag(FRAGMENT_TAG);
         if (filterFragment != null) {
             getSupportFragmentManager().
                     beginTransaction().
@@ -138,11 +147,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Información")
                 .setMessage("Esta funcionalidad aún no está disponible")
-                .setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
+                .setPositiveButton("Cerrar", (dialog, id) -> dialog.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
