@@ -31,10 +31,10 @@ public class FilterDataVO implements Parcelable {
         this.amountProgress = this.maxRangeAmount;
         this.dateIssuedFrom = new Date(0);
         this.dateIssuedTo = new Date();
-        for (Map.Entry<Integer, Boolean> set : this.state.entrySet()) {
-            CheckBox c = view.findViewById(set.getKey());
+        state.forEach((checkboxId, isChecked) -> {
+            CheckBox c = view.findViewById(checkboxId);
             c.setChecked(false);
-        }
+        });
     }
 
     public int getMinRangeAmount() {

@@ -45,15 +45,11 @@ public class FilterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
+        // Retrieve invoices list and filter
         retrievePassedData();
-        if (filter.getState().isEmpty()) {
-            findAllCheckboxes((ViewGroup) view.getRootView());
-        } else {
-            setDatePickersStatus(view);
-            setStateCheckboxesStatus(view);
-        }
-        findMaxRangeAmount();
-        setSeekbarStatus(view);
+        // Set datePickers, seekbar and checkboxes status
+        setInitialStatus(view);
+        // Set all click listeners
         setClickListeners(view);
         return view;
     }
@@ -82,6 +78,17 @@ public class FilterFragment extends Fragment {
         }
     }
 
+    private void setInitialStatus(View view) {
+        if (filter.getState().isEmpty()) {
+            findAllCheckboxes((ViewGroup) view.getRootView());
+        } else {
+            setDatePickersStatus(view);
+            setStateCheckboxesStatus(view);
+        }
+        findMaxRangeAmount();
+        setSeekbarStatus(view);
+    }
+
     private Date getCalendarDate(Calendar calendar, int year, int month, int dayOfMonth) {
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
@@ -108,10 +115,10 @@ public class FilterFragment extends Fragment {
         setCloseButtonListener(view);
         setResetButtonListener(view);
         allStateCheckboxes = filter.getState();
-        for (Map.Entry<Integer, Boolean> set : allStateCheckboxes.entrySet()) {
-            CheckBox stateCheckbox = view.findViewById(set.getKey());
+        allStateCheckboxes.forEach((checkboxId, isChecked) -> {
+            CheckBox stateCheckbox = view.findViewById(checkboxId);
             stateCheckbox.setOnCheckedChangeListener(this::updateCheckboxStatus);
-        }
+        });
     }
 
     // DatePickers related methods
@@ -259,10 +266,10 @@ public class FilterFragment extends Fragment {
     }
 
     private void setStateCheckboxesStatus(View view) {
-        for (Map.Entry<Integer, Boolean> set : filter.getState().entrySet()) {
-            CheckBox c = view.findViewById(set.getKey());
-            c.setChecked(set.getValue());
-        }
+        filter.getState().forEach((checkboxId, isChecked) -> {
+            CheckBox c = view.findViewById(checkboxId);
+            c.setChecked(isChecked);
+        });
     }
 
     private void updateCheckboxStatus(CompoundButton view, boolean isChecked) {
