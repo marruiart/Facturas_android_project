@@ -48,8 +48,7 @@
         app:layout_constraintHorizontal_bias="0.955"
         app:layout_constraintStart_toStartOf="@+id/toolbar_main"
         app:layout_constraintTop_toTopOf="@+id/toolbar_main"
-        app:srcCompat="@drawable/ic_filter"
-        android:onClick="openFilterFragment"/>
+        app:srcCompat="@drawable/ic_filter"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_invoices"

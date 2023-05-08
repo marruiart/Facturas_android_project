@@ -3,6 +3,7 @@ package com.example.facturas;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private void initializeActivity() {
         // Set layout for the RecyclerView
         setLayoutManager();
+        // Set filter button
+        setFilterButtonListener();
         // Callback to get the list of invoices and initialize the RecyclerView adapter
         enqueueInvoices();
         // Initialize invoice filter
@@ -48,6 +51,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             layoutManager = new LinearLayoutManager(MainActivity.this);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(layoutManager);
+        }
+    }
+
+    private void setFilterButtonListener() {
+        ImageButton filterButton = findViewById(R.id.btn_filter);
+        if (filterButton != null) {
+            filterButton.setOnClickListener(filterBtn -> openFilterFragment());
         }
     }
 
@@ -103,8 +113,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         notFound.setVisibility(visibility);
     }
 
-    public void openFilterFragment(View v) {
-        // TODO onClickListener for this button
+    public void openFilterFragment() {
         FilterFragment filterFragment = new FilterFragment();
         Bundle passedData = new Bundle();
         // Hide no invoices found message
