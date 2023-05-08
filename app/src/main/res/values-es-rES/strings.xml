@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Facturas</string>
+
+    <!-- general -->
+    <string name="general_dd_MM_yy">día/mes/año</string>
+
+    <!-- activity_main -->
+    <string name="activity_main_tv_not_found">No se encontraron facturas</string>
+
+    <!-- fragment_filter -->
     <string name="fragment_filter_tv_filter_invoices">Filtrar facturas</string>
     <string name="fragment_filter_btn_description_close_filters">Cerrar filtros</string>
     <string name="fragment_filter_tv_to">Hasta:</string>
@@ -8,7 +16,8 @@
     <string name="fragment_filter_tv_by_state">Por estado</string>
     <string name="fragment_filter_tv_date_of_issue">Con fecha de emisión</string>
     <string name="fragment_filter_tv_from">Desde:</string>
-    <string name="general_dd_MM_yy">día/mes/año</string>
+    <string name="fragment_filter_tv_range_boundary">%d €</string>
+    <string name="fragment_filter_tv_filtered_range">%d €   -   %d €</string>
     <string name="fragment_filter_cb_paid">Pagada</string>
     <string name="fragment_filter_cb_pending_payment">Pendiente de pago</string>
     <string name="fragment_filter_cb_payment_plan">Plan de pago</string>
@@ -16,5 +25,7 @@
     <string name="fragment_filter_cb_canceled">Anulada</string>
     <string name="fragment_filter_btn_erase">Borrar filtros</string>
     <string name="fragment_filter_btn_filter">Aplicar filtros</string>
-    <string name="activity_main_tv_not_found">No se encontraron facturas</string>
+
+    <!-- invoices_recycler_adapter -->
+    <string name="invoice_amount">%.2f €</string>
 </resources>

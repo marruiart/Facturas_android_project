@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecyclerAdapter.InvoicesViewHolder> {
-    private ArrayList<InvoiceVO> invoices;
+    private final ArrayList<InvoiceVO> invoices;
     private RecyclerOnClickListener listener;
 
     public InvoicesRecyclerAdapter(ArrayList<InvoiceVO> invoices) {
@@ -37,12 +37,13 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
     @Override
     public void onBindViewHolder(@NonNull InvoicesViewHolder invoicesViewHolder, int position) {
         invoicesViewHolder.itemView.setOnClickListener(v -> {
-            if (listener != null)
+            if (listener != null) {
                 listener.onItemClick(position);
+            }
         });
         InvoiceVO invoice = invoices.get(position);
-        invoicesViewHolder.getTvInvoiceDate().setText(invoice.getFecha("dd MMM yyyy"));
-        invoicesViewHolder.getTvInvoiceAmount().setText(String.format("%.2f €", invoice.getImporteOrdenacion()));
+        invoicesViewHolder.getTvInvoiceDate().setText(invoice.getFecha(MyConstants.DATE_FORMAT));
+        invoicesViewHolder.getTvInvoiceAmount().setText(String.format(App.getContext().getString(R.string.invoice_amount), invoice.getImporteOrdenacion()));
         invoicesViewHolder.getTvInvoiceState().setText(invoice.getDescEstado());
         invoicesViewHolder.getTvInvoiceState().setTextColor(invoice.getTextColor());
     }
@@ -60,9 +61,9 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
 
         public InvoicesViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.tvInvoiceDate = (TextView) itemView.findViewById(R.id.textView_InvoiceDate);
-            this.tvInvoiceState = (TextView) itemView.findViewById(R.id.textView_InvoiceState);
-            this.tvInvoiceAmount = (TextView) itemView.findViewById(R.id.textView_invoiceAmount);
+            this.tvInvoiceDate = itemView.findViewById(R.id.textView_InvoiceDate);
+            this.tvInvoiceState = itemView.findViewById(R.id.textView_InvoiceState);
+            this.tvInvoiceAmount = itemView.findViewById(R.id.textView_invoiceAmount);
         }
 
         public TextView getTvInvoiceDate() {

@@ -224,8 +224,8 @@ public class FilterFragment extends Fragment {
         TextView minRangeTv = view.findViewById(R.id.textView_minRange);
         TextView maxRangeTv = view.findViewById(R.id.textView_maxRange);
         amountSeekbar.setMax(filter.getMaxRangeAmount());
-        minRangeTv.setText(String.format(Locale.getDefault(), "%d €", filter.getMinRangeAmount()));
-        maxRangeTv.setText(String.format(Locale.getDefault(), "%d €", filter.getMaxRangeAmount()));
+        minRangeTv.setText(String.format(getString(R.string.fragment_filter_tv_range_boundary), filter.getMinRangeAmount()));
+        maxRangeTv.setText(String.format(getString(R.string.fragment_filter_tv_range_boundary), filter.getMaxRangeAmount()));
     }
 
     private void setSeekBarProgress(SeekBar amountSeekbar) {
@@ -239,7 +239,7 @@ public class FilterFragment extends Fragment {
     private void setFilteredRangeTextview(View view) {
         if (view != null) {
             TextView filteredRangeTv = view.findViewById(R.id.textView_filteredRange);
-            filteredRangeTv.setText(String.format("%d €   -   %d €", filter.getMinRangeAmount(), filter.getAmountProgress()));
+            filteredRangeTv.setText(String.format(getString(R.string.fragment_filter_tv_filtered_range), filter.getMinRangeAmount(), filter.getAmountProgress()));
         }
     }
 

@@ -14,6 +14,8 @@
     <string name="fragment_filter_tv_to">To:</string>
     <string name="fragment_filter_tv_by_amount">By amount</string>
     <string name="fragment_filter_tv_by_state">By state</string>
+    <string name="fragment_filter_tv_range_boundary">%d €</string>
+    <string name="fragment_filter_tv_filtered_range">%d €   -   %d €</string>
     <string name="fragment_filter_cb_paid">Paid</string>
     <string name="fragment_filter_cb_pending_payment">Pending payment</string>
     <string name="fragment_filter_cb_payment_plan">Payment plan</string>
@@ -22,4 +24,7 @@
     <string name="fragment_filter_btn_erase">Erase filters</string>
     <string name="fragment_filter_btn_filter">Apply filters</string>
     <string name="fragment_filter_btn_description_close_filters">Close filters</string>
+
+    <!-- invoices_recycler_adapter -->
+    <string name="invoice_amount">%.2f €</string>
 </resources>
