@@ -11,12 +11,11 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class InvoicesJsonApiAdapter {
-    private static InvoicesJsonApiService API_SERVICE;
-    private static final String BASE_URL = "https://viewnextandroid.mocklab.io/";
+public class InvoicesRetrofitApiService {
+    private static InvoicesRetrofitApiRequests apiService;
     public List<InvoiceVO> invoicesList = new ArrayList<>();
 
-    public static InvoicesJsonApiService getApiService() {
+    public static InvoicesRetrofitApiRequests getApiService() {
         // Create interceptor and indicate log level
         HttpLoggingInterceptor loggin = new HttpLoggingInterceptor();
         loggin.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -24,18 +23,18 @@ public class InvoicesJsonApiAdapter {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(loggin);
 
-        if (API_SERVICE == null) {
+        if (apiService == null) {
             Gson gson = new GsonBuilder()
-                    .setDateFormat("dd/MM/yyyy")
+                    .setDateFormat(MyConstants.API_DATE_FORMAT)
                     .create();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+                    .baseUrl(MyConstants.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(httpClient.build())
                     .build();
-            API_SERVICE = retrofit.create(InvoicesJsonApiService.class);
+            apiService = retrofit.create(InvoicesRetrofitApiRequests.class);
         }
-        return API_SERVICE;
+        return apiService;
     }
 }

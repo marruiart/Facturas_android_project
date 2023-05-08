@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     public void enqueueInvoices() {
-        Call<InvoicesApiResponse> call = InvoicesJsonApiAdapter.getApiService().getInvoices();
+        Call<InvoicesApiResponse> call = InvoicesRetrofitApiService.getApiService().getInvoices();
         call.enqueue(new Callback<InvoicesApiResponse>() {
             @Override
             public void onResponse(@NonNull Call<InvoicesApiResponse> call, Response<InvoicesApiResponse> response) {
