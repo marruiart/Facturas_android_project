@@ -7,13 +7,22 @@ import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.*;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Entity(tableName = "invoices")
 public final class InvoiceVO implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    @ColumnInfo(name = "descEstado")
     private String descEstado;
+    @ColumnInfo(name = "importeOrdenacion")
     private Float importeOrdenacion;
+    @ColumnInfo(name = "fecha")
     private Date fecha;
+    @ColumnInfo(name = "textColor")
     private int textColor;
 
     public InvoiceVO(String descEstado, Float importeOrdenacion, Date fecha) {
@@ -28,6 +37,14 @@ public final class InvoiceVO implements Parcelable {
         this.importeOrdenacion = in.readFloat();
         this.fecha = new Date(in.readLong());
         this.textColor = in.readInt();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDescEstado() {
@@ -73,6 +90,10 @@ public final class InvoiceVO implements Parcelable {
 
     public int getTextColor() {
         return textColor;
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
     }
 
     @Override

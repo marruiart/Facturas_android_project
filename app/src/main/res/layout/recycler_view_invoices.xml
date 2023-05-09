@@ -18,6 +18,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         tools:text="dd MM yyyy" />
 
     <TextView
@@ -29,7 +30,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_InvoiceDate"
-        tools:text="@string/invoices_state" />
+        tools:text="@string/fragment_filter_tv_by_state" />
 
     <TextView
         android:id="@+id/textView_invoiceAmount"

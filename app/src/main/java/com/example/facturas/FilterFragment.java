@@ -114,7 +114,7 @@ public class FilterFragment extends Fragment {
         setApplyButtonListener(view);
         setCloseButtonListener(view);
         setResetButtonListener(view);
-        allStateCheckboxes = filter.getState();
+        allStateCheckboxes = (HashMap<Integer, Boolean>) filter.getState();
         allStateCheckboxes.forEach((checkboxId, isChecked) -> {
             CheckBox stateCheckbox = view.findViewById(checkboxId);
             stateCheckbox.setOnCheckedChangeListener(this::updateCheckboxStatus);

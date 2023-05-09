@@ -5,7 +5,6 @@ import android.os.Parcelable;
 import android.view.View;
 import android.widget.CheckBox;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +31,8 @@ public class FilterDataVO implements Parcelable {
         this.dateIssuedFrom = new Date(0);
         this.dateIssuedTo = new Date();
         state.forEach((checkboxId, isChecked) -> {
-            CheckBox c = view.findViewById(checkboxId);
-            c.setChecked(false);
+            CheckBox stateCheckbox = view.findViewById(checkboxId);
+            stateCheckbox.setChecked(false);
         });
     }
 
@@ -77,12 +76,12 @@ public class FilterDataVO implements Parcelable {
         this.dateIssuedTo = dateIssuedTo;
     }
 
-    public HashMap<Integer, Boolean> getState() {
+    public Map<Integer, Boolean> getState() {
         return state;
     }
 
-    public void setState(HashMap<Integer, Boolean> state) {
-        this.state = state;
+    public void setState(Map<Integer, Boolean> state) {
+        this.state = (HashMap<Integer, Boolean>) state;
     }
 
     public void putStateCheckbox(Integer id, Boolean isChecked) {

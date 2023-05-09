@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private static final String FRAGMENT_TAG = "FILTER_FRAGMENT";
     private ArrayList<InvoiceVO> invoicesList = new ArrayList<>();
     private FilterDataVO filter = null;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +37,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         setLayoutManager();
         // Set filter button
         setFilterButtonListener();
-        // Callback to get the list of invoices and initialize the RecyclerView adapter
-        enqueueInvoices();
+        // Retrieve invoices list
+        getInvoicesList();
         // Initialize invoice filter
         initializeFilter();
     }
@@ -61,6 +62,22 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
     }
 
+    private void getInvoicesList() {
+        // Retrieve invoices from local database, if exists
+        getInvoicesFromRoom();
+        // Callback to get the list of invoices and initialize the RecyclerView adapter
+        if (invoicesList == null || invoicesList.isEmpty()) {
+            enqueueInvoices();
+        }
+    }
+
+    private void getInvoicesFromRoom() {
+        AppExecutors.ioThread(() -> {
+            db = AppDatabase.getInstance(getApplicationContext());
+            invoicesList = (ArrayList<InvoiceVO>) db.getInvoiceDao().getAllInvoices();
+        });
+    }
+
     public void enqueueInvoices() {
         Call<InvoicesApiResponse> call = InvoicesRetrofitApiService.getApiService().getInvoices();
         call.enqueue(new Callback<InvoicesApiResponse>() {
@@ -69,12 +86,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 if (response.isSuccessful()) {
                     InvoicesApiResponse apiResponse = response.body();
                     if (apiResponse != null) {
-                        invoicesList = apiResponse.getFacturas();
+                        // Retrieve the invoice list from the api
+                        invoicesList = (ArrayList<InvoiceVO>) apiResponse.getFacturas();
+                        // Insert the data into Room database
+                        insertDataInRoomDatabase();
                         // Set state as strings from app resources
-                        for (InvoiceVO invoice : invoicesList) {
-                            invoice.setDescEstado(invoice.getDescEstado());
-                        }
+                        setStringsForInvoiceDescEstado();
                         Log.d("onResponse invoices", "Size of 'facturas' list: " + invoicesList.size());
+                        // Initialize RecyclerView adapter
                         initializeRecyclerViewAdapter();
                     }
                 }
@@ -86,6 +105,16 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 Log.d("onFailure error message", error);
             }
         });
+    }
+
+    private void setStringsForInvoiceDescEstado() {
+        for (InvoiceVO invoice : invoicesList) {
+            invoice.setDescEstado(invoice.getDescEstado());
+        }
+    }
+
+    private void insertDataInRoomDatabase() {
+        AppExecutors.ioThread(() -> invoicesList.forEach(invoice -> db.getInvoiceDao().insertInvoice(invoice)));
     }
 
     private void initializeFilter() {

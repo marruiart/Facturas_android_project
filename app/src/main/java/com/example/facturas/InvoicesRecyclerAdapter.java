@@ -9,13 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecyclerAdapter.InvoicesViewHolder> {
     private final ArrayList<InvoiceVO> invoices;
     private RecyclerOnClickListener listener;
 
-    public InvoicesRecyclerAdapter(ArrayList<InvoiceVO> invoices) {
-        this.invoices = invoices;
+    public InvoicesRecyclerAdapter(List<InvoiceVO> invoices) {
+        this.invoices = (ArrayList<InvoiceVO>) invoices;
     }
 
     public interface RecyclerOnClickListener {

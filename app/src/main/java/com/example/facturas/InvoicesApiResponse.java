@@ -1,12 +1,12 @@
 package com.example.facturas;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class InvoicesApiResponse {
     private int numFacturas;
-    private ArrayList<InvoiceVO> facturas;
+    private List<InvoiceVO> facturas;
 
-    public InvoicesApiResponse(int numFacturas, ArrayList<InvoiceVO> facturas) {
+    public InvoicesApiResponse(int numFacturas, List<InvoiceVO> facturas) {
         this.numFacturas = numFacturas;
         this.facturas = facturas;
     }
@@ -19,11 +19,12 @@ public class InvoicesApiResponse {
         this.numFacturas = numFacturas;
     }
 
-    public ArrayList<InvoiceVO> getFacturas() {
+    public List<InvoiceVO> getFacturas() {
         return facturas;
     }
 
-    public void setFacturas(ArrayList<InvoiceVO> facturas) {
+    public void setFacturas(List<InvoiceVO> facturas) {
         this.facturas = facturas;
     }
 }
+
