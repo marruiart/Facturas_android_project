@@ -19,7 +19,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements FilterFragment.OnDataPassListener, InvoicesRecyclerAdapter.RecyclerOnClickListener {
+public class MainActivity extends AppCompatActivity implements FilterFragment.OnDataPassListener {
     private static final String FRAGMENT_TAG = "FILTER_FRAGMENT";
     private ArrayList<InvoiceVO> invoicesList = new ArrayList<>();
     private FilterDataVO filter = null;
@@ -130,7 +130,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         InvoicesRecyclerAdapter adapter;
 
         adapter = new InvoicesRecyclerAdapter(invoicesList);
-        adapter.setOnItemClickListener(this);
+        // Set listener for click events on items in the RecyclerView
+        adapter.setOnItemClickListener(item -> showAlertDialog());
+        // Find RecyclerView and set adapter to it
         mRecyclerView = findViewById(R.id.recyclerView_invoices);
         if (mRecyclerView != null) {
             mRecyclerView.setAdapter(adapter);
@@ -140,6 +142,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private void showNotFoundMessage(int visibility) {
         TextView notFound = findViewById(R.id.invoice_not_found);
         notFound.setVisibility(visibility);
+    }
+
+    private void showAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Información")
+                .setMessage("Esta funcionalidad aún no está disponible")
+                .setPositiveButton("Cerrar", (dialog, id) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void openFilterFragment() {
@@ -177,16 +188,5 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     remove(filterFragment).
                     commit();
         }
-    }
-
-    @Override
-    public void onItemClick(int position) {
-        // OnClick event for the RecyclerView
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Información")
-                .setMessage("Esta funcionalidad aún no está disponible")
-                .setPositiveButton("Cerrar", (dialog, id) -> dialog.dismiss());
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 }
