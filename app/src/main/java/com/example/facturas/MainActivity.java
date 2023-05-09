@@ -146,9 +146,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Información")
-                .setMessage("Esta funcionalidad aún no está disponible")
-                .setPositiveButton("Cerrar", (dialog, id) -> dialog.dismiss());
+        builder.setTitle(R.string.alert_dialog_title_info)
+                .setMessage(R.string.alert_dialog_message_non_available)
+                .setPositiveButton(R.string.alert_dialog_btn_close, (dialog, which) -> dialog.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();
     }

@@ -7,6 +7,12 @@
     <!-- activity_main -->
     <string name="activity_main_tv_not_found">No invoices found</string>
 
+    <!-- alert_dialog -->
+    <string name="alert_dialog_title_info">Information</string>
+    <string name="alert_dialog_message_non_available">This functionality is not available yet</string>
+    <string name="alert_dialog_btn_close">Close</string>
+
+
     <!-- fragment_filter -->
     <string name="fragment_filter_tv_filter_invoices">Filter invoices</string>
     <string name="fragment_filter_tv_date_of_issue">By date of issue</string>
