@@ -65,16 +65,19 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private void getInvoicesList() {
         // Retrieve invoices from local database, if exists
         getInvoicesFromRoom();
-        // Callback to get the list of invoices and initialize the RecyclerView adapter
-        if (invoicesList == null || invoicesList.isEmpty()) {
-            enqueueInvoices();
-        }
     }
 
     private void getInvoicesFromRoom() {
         AppExecutors.ioThread(() -> {
             db = AppDatabase.getInstance(getApplicationContext());
+            //TODO check why invoices don't show descEstado
             invoicesList = (ArrayList<InvoiceVO>) db.getInvoiceDao().getAllInvoices();
+            // Callback to get the list of invoices and initialize the RecyclerView adapter
+            if (invoicesList == null || invoicesList.isEmpty()) {
+                enqueueInvoices();
+            } else {
+                initializeRecyclerViewAdapter();
+            }
         });
     }
 
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     private void insertDataInRoomDatabase() {
-        AppExecutors.ioThread(() -> invoicesList.forEach(invoice -> db.getInvoiceDao().insertInvoice(invoice)));
+        AppExecutors.ioThread(() -> invoicesList.forEach(invoice -> db.getInvoiceDao().insertInvoices(invoice)));
     }
 
     private void initializeFilter() {
