@@ -1,4 +1,4 @@
-package com.example.facturas;
+package com.example.facturas.utils;
 
 import androidx.room.TypeConverter;
 

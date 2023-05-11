@@ -1,4 +1,4 @@
-package com.example.facturas;
+package com.example.facturas.ui.fragments;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -17,6 +17,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.example.facturas.R;
+import com.example.facturas.data.model.FilterDataVO;
+import com.example.facturas.data.model.InvoiceVO;
+import com.example.facturas.utils.MyConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

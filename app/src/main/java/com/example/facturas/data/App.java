@@ -1,7 +1,9 @@
-package com.example.facturas;
+package com.example.facturas.data;
 
 import android.app.Application;
 import android.content.Context;
+
+import com.example.facturas.data.database.AppDatabase;
 
 public class App extends Application {
 

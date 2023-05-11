@@ -1,4 +1,4 @@
-package com.example.facturas;
+package com.example.facturas.ui.activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +13,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.facturas.data.App;
+import com.example.facturas.data.database.model.InvoiceEntity;
+import com.example.facturas.ui.fragments.FilterFragment;
+import com.example.facturas.utils.InvoicesRecyclerAdapter;
+import com.example.facturas.data.network.retrofit.InvoicesRetrofitApiService;
+import com.example.facturas.R;
+import com.example.facturas.data.model.FilterDataVO;
+import com.example.facturas.data.model.InvoiceVO;
+import com.example.facturas.data.model.InvoicesApiResponse;
+import com.example.facturas.utils.AppExecutors;
 
 import java.util.ArrayList;
 
@@ -77,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     private void getInvoicesFromRoom() {
         AppExecutors.ioThread(() -> {
-            invoicesList = (ArrayList<InvoiceVO>) App.getDatabase().getInvoiceDao().getAllInvoices();
+            invoicesList = InvoiceEntity.toInvoiceVOList(App.getDatabase().getInvoiceDao().getAllInvoices());
             Log.d("Fill/update invoicesList", "Room -> Size of 'facturas' list: " + invoicesList.size());
             // Initialize or update RecyclerView
             (MainActivity.this).runOnUiThread(this::printInvoicesList);
@@ -119,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private void insertDataInRoomDatabase() {
         AppExecutors.ioThread(() -> {
             App.getDatabase().getInvoiceDao().deleteAll();
-            App.getDatabase().getInvoiceDao().insertInvoices(invoicesList.toArray(new InvoiceVO[invoicesList.size()]));
+            App.getDatabase().getInvoiceDao().insertInvoices(InvoiceEntity.fromInvoiceVOList(invoicesList));
         });
     }
 

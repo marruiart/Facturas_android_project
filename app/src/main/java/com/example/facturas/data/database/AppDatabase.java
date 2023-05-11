@@ -1,10 +1,14 @@
-package com.example.facturas;
+package com.example.facturas.data.database;
 
 import android.content.Context;
 
 import androidx.room.*;
 
-@Database(entities = {InvoiceVO.class}, version = 1)
+import com.example.facturas.data.database.model.InvoiceEntity;
+import com.example.facturas.utils.Converters;
+import com.example.facturas.data.database.dao.InvoiceDao;
+
+@Database(entities = {InvoiceEntity.class}, version = 1)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 

@@ -1,4 +1,4 @@
-package com.example.facturas;
+package com.example.facturas.utils;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +7,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.facturas.R;
+import com.example.facturas.data.App;
+import com.example.facturas.data.model.InvoiceVO;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.facturas;
+package com.example.facturas.utils;
 
 public final class MyConstants {
 

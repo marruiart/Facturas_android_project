@@ -1,4 +1,6 @@
-package com.example.facturas;
+package com.example.facturas.data.model;
+
+import com.example.facturas.data.model.InvoiceVO;
 
 import java.util.List;
 

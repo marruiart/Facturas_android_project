@@ -1,4 +1,4 @@
-package com.example.facturas;
+package com.example.facturas.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,5 +1,7 @@
-package com.example.facturas;
+package com.example.facturas.data.network.retrofit;
 
+import com.example.facturas.data.model.InvoiceVO;
+import com.example.facturas.utils.MyConstants;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
