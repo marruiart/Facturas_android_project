@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private static final String FRAGMENT_TAG = "FILTER_FRAGMENT";
     private ArrayList<InvoiceVO> invoicesList = new ArrayList<>();
     private FilterDataVO filter = null;
-    private AppDatabase db;
+    private InvoicesRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,42 +63,47 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
     }
 
+    // Invoices list data management
     private void getInvoicesList() {
         // Retrieve invoices from local database, if exists
         getInvoicesFromRoom();
+        // Callback to get the list of invoices from Retrofit Api
+        getInvoicesFromApi();
+    }
+
+    private void setStringsForInvoiceDescEstado() {
+        invoicesList.forEach(invoice -> invoice.setDescEstado(invoice.getDescEstado()));
     }
 
     private void getInvoicesFromRoom() {
         AppExecutors.ioThread(() -> {
-            db = AppDatabase.getInstance(getApplicationContext());
-            //TODO check why invoices don't show descEstado
-            invoicesList = (ArrayList<InvoiceVO>) db.getInvoiceDao().getAllInvoices();
-            // Callback to get the list of invoices and initialize the RecyclerView adapter
-            if (invoicesList == null || invoicesList.isEmpty()) {
-                enqueueInvoices();
-            } else {
-                initializeRecyclerViewAdapter();
-            }
+            invoicesList = (ArrayList<InvoiceVO>) App.getDatabase().getInvoiceDao().getAllInvoices();
+            Log.d("Fill/update invoicesList", "Room -> Size of 'facturas' list: " + invoicesList.size());
+            // Initialize or update RecyclerView
+            (MainActivity.this).runOnUiThread(this::printInvoicesList);
         });
     }
 
-    public void enqueueInvoices() {
+    public void getInvoicesFromApi() {
         Call<InvoicesApiResponse> call = InvoicesRetrofitApiService.getApiService().getInvoices();
         call.enqueue(new Callback<InvoicesApiResponse>() {
             @Override
             public void onResponse(@NonNull Call<InvoicesApiResponse> call, Response<InvoicesApiResponse> response) {
                 if (response.isSuccessful()) {
+                    int listSize = invoicesList.size();
                     InvoicesApiResponse apiResponse = response.body();
                     if (apiResponse != null) {
                         // Retrieve the invoice list from the api
                         invoicesList = (ArrayList<InvoiceVO>) apiResponse.getFacturas();
-                        // Insert the data into Room database
-                        insertDataInRoomDatabase();
+                        Log.d("Fill/update invoicesList", "Api -> Size of 'facturas' list: " + invoicesList.size());
                         // Set state as strings from app resources
                         setStringsForInvoiceDescEstado();
-                        Log.d("onResponse invoices", "Size of 'facturas' list: " + invoicesList.size());
-                        // Initialize RecyclerView adapter
-                        initializeRecyclerViewAdapter();
+                        // Insert the data into Room database
+                        insertDataInRoomDatabase();
+                        if (listSize != invoicesList.size()) {
+                            // If changed, print invoices in RecyclerView
+                            printInvoicesList();
+                        }
                     }
                 }
             }
@@ -110,18 +116,24 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         });
     }
 
-    private void setStringsForInvoiceDescEstado() {
-        for (InvoiceVO invoice : invoicesList) {
-            invoice.setDescEstado(invoice.getDescEstado());
-        }
-    }
-
     private void insertDataInRoomDatabase() {
-        AppExecutors.ioThread(() -> invoicesList.forEach(invoice -> db.getInvoiceDao().insertInvoices(invoice)));
+        AppExecutors.ioThread(() -> {
+            App.getDatabase().getInvoiceDao().deleteAll();
+            App.getDatabase().getInvoiceDao().insertInvoices(invoicesList.toArray(new InvoiceVO[invoicesList.size()]));
+        });
     }
 
-    private void initializeFilter() {
-        filter = new FilterDataVO();
+    // RecyclerView methods
+    private void printInvoicesList() {
+        if (adapter != null) {
+            updateRecyclerViewAdapter(invoicesList);
+            setClickListenersOnItems();
+            Toast.makeText(MainActivity.this, R.string.activity_main_toast_list_updated, Toast.LENGTH_SHORT).show();
+        } else {
+            initializeRecyclerViewAdapter();
+            setClickListenersOnItems();
+            setAdapterToRecyclerView();
+        }
     }
 
     private void initializeRecyclerViewAdapter() {
@@ -129,19 +141,29 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     private void initializeRecyclerViewAdapter(ArrayList<InvoiceVO> invoicesList) {
-        RecyclerView mRecyclerView;
-        InvoicesRecyclerAdapter adapter;
-
         adapter = new InvoicesRecyclerAdapter(invoicesList);
+    }
+
+    private void updateRecyclerViewAdapter(ArrayList<InvoiceVO> newInvoiceList) {
+        adapter.setInvoices(newInvoiceList);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setClickListenersOnItems() {
         // Set listener for click events on items in the RecyclerView
         adapter.setOnItemClickListener(item -> showAlertDialog());
-        // Find RecyclerView and set adapter to it
-        mRecyclerView = findViewById(R.id.recyclerView_invoices);
+    }
+
+    private void setAdapterToRecyclerView() {
+        // Find RecyclerView
+        RecyclerView mRecyclerView = findViewById(R.id.recyclerView_invoices);
         if (mRecyclerView != null) {
+            // Set adapter to it
             mRecyclerView.setAdapter(adapter);
         }
     }
 
+    // Methods to show info
     private void showNotFoundMessage(int visibility) {
         TextView notFound = findViewById(R.id.invoice_not_found);
         notFound.setVisibility(visibility);
@@ -154,6 +176,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 .setPositiveButton(R.string.alert_dialog_btn_close, (dialog, which) -> dialog.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    // Filter methods
+    private void initializeFilter() {
+        filter = new FilterDataVO();
     }
 
     public void openFilterFragment() {
@@ -177,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             showNotFoundMessage(View.VISIBLE);
         }
         this.filter = filter;
-        initializeRecyclerViewAdapter(filteredInvoicesList);
+        updateRecyclerViewAdapter(filteredInvoicesList);
         Log.d("filterApplied", String.format("Original size: %d  Filtered size: %d", invoicesList.size(), filteredInvoicesList.size()));
     }
 

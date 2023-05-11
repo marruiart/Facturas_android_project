@@ -12,8 +12,12 @@ import java.util.List;
 @Dao
 public interface InvoiceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertInvoices(InvoiceVO ... invoice);
+    void insertInvoices(InvoiceVO... invoice);
 
     @Query("SELECT * FROM invoices")
+        // TODO implement LiveData
     List<InvoiceVO> getAllInvoices();
+
+    @Query("DELETE FROM invoices")
+    void deleteAll();
 }

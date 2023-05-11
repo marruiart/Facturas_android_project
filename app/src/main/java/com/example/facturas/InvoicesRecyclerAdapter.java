@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecyclerAdapter.InvoicesViewHolder> {
-    private final ArrayList<InvoiceVO> invoices;
+    private ArrayList<InvoiceVO> invoices;
     private RecyclerOnClickListener listener;
 
     public InvoicesRecyclerAdapter(List<InvoiceVO> invoices) {
@@ -25,6 +25,10 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
 
     public void setOnItemClickListener(RecyclerOnClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setInvoices(ArrayList<InvoiceVO> invoices) {
+        this.invoices = invoices;
     }
 
     @NonNull

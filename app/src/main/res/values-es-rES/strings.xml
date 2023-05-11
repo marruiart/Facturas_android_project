@@ -7,6 +7,7 @@
 
     <!-- activity_main -->
     <string name="activity_main_tv_not_found">No se encontraron facturas</string>
+    <string name="activity_main_toast_list_updated">Lista de facturas actualizada</string>
 
     <!-- alert_dialog -->
     <string name="alert_dialog_title_info">Información</string>

@@ -19,9 +19,9 @@ public final class InvoiceVO implements Parcelable {
     @ColumnInfo(name = "descEstado")
     private String descEstado;
     @ColumnInfo(name = "importeOrdenacion")
-    private Float importeOrdenacion;
+    private final Float importeOrdenacion;
     @ColumnInfo(name = "fecha")
-    private Date fecha;
+    private final Date fecha;
     @ColumnInfo(name = "textColor")
     private int textColor;
 
@@ -72,7 +72,7 @@ public final class InvoiceVO implements Parcelable {
                 this.descEstado = context.getString(R.string.fragment_filter_cb_payment_plan);
                 break;
             default:
-                this.descEstado = "";
+                this.descEstado = descEstado;
         }
     }
 

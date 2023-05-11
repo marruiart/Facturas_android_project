@@ -6,6 +6,7 @@
 
     <!-- activity_main -->
     <string name="activity_main_tv_not_found">No invoices found</string>
+    <string name="activity_main_toast_list_updated">Invoices list updated</string>
 
     <!-- alert_dialog -->
     <string name="alert_dialog_title_info">Information</string>
