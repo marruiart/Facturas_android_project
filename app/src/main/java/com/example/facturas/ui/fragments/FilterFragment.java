@@ -6,21 +6,27 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.facturas.R;
 import com.example.facturas.data.model.FilterDataVO;
 import com.example.facturas.data.model.InvoiceVO;
+import com.example.facturas.ui.activities.MainActivity;
 import com.example.facturas.utils.MyConstants;
 
 import java.text.SimpleDateFormat;
@@ -42,14 +48,16 @@ public class FilterFragment extends Fragment {
 
     public interface OnDataPassListener {
         void onFilterApply(ArrayList<InvoiceVO> filteredInvoicesList, FilterDataVO filter);
-
-        void onFilterClose();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
+        // Set toolbar
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.menu_filter);
+        toolbar.setTitle(R.string.fragment_filter_tv_filter_invoices);
         // Retrieve invoices list and filter
         retrievePassedData();
         // Set datePickers, seekbar and checkboxes status
@@ -117,7 +125,6 @@ public class FilterFragment extends Fragment {
         toDateBtn = view.findViewById(R.id.btn_pickerTo);
         setDateButtonListener(toDateBtn);
         setApplyButtonListener(view);
-        setCloseButtonListener(view);
         setResetButtonListener(view);
         allStateCheckboxes = (HashMap<Integer, Boolean>) filter.getState();
         allStateCheckboxes.forEach((checkboxId, isChecked) -> {
@@ -367,15 +374,4 @@ public class FilterFragment extends Fragment {
         }
     }
 
-    // Close button methods
-    private void setCloseButtonListener(View view) {
-        ImageButton closeButton = view.findViewById(R.id.btn_close);
-        if (closeButton != null) {
-            closeButton.setOnClickListener(closeBtn -> closeFilter());
-        }
-    }
-
-    private void closeFilter() {
-        activityCallback.onFilterClose();
-    }
 }

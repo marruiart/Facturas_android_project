@@ -2,6 +2,9 @@ package com.example.facturas.ui.activities;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -47,12 +50,19 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private void initializeActivity() {
         // Set layout for the RecyclerView
         setLayoutManager();
-        // Set filter button
-        setFilterButtonListener();
+        // Set toolbar
+        setSupportActionBar(findViewById(R.id.toolbar));
         // Retrieve invoices list
         getInvoicesList();
         // Initialize invoice filter
         initializeFilter();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     private void setLayoutManager() {
@@ -64,13 +74,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             layoutManager = new LinearLayoutManager(MainActivity.this);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(layoutManager);
-        }
-    }
-
-    private void setFilterButtonListener() {
-        ImageButton filterButton = findViewById(R.id.btn_filter);
-        if (filterButton != null) {
-            filterButton.setOnClickListener(filterBtn -> openFilterFragment());
         }
     }
 
@@ -194,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         filter = new FilterDataVO();
     }
 
-    public void openFilterFragment() {
+    public void openFilterFragment(MenuItem menuItem) {
         FilterFragment filterFragment = new FilterFragment();
         Bundle passedData = new Bundle();
         // Hide no invoices found message
@@ -210,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     @Override
     public void onFilterApply(ArrayList<InvoiceVO> filteredInvoicesList, FilterDataVO filter) {
-        onFilterClose();
+        closeFilter(null);
         if (filteredInvoicesList.isEmpty()) {
             showNotFoundMessage(View.VISIBLE);
         }
@@ -219,8 +222,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         Log.d("filterApplied", String.format("Original size: %d  Filtered size: %d", invoicesList.size(), filteredInvoicesList.size()));
     }
 
-    @Override
-    public void onFilterClose() {
+    public void closeFilter(MenuItem menuItem) {
         Fragment filterFragment = getSupportFragmentManager()
                 .findFragmentByTag(FRAGMENT_TAG);
         if (filterFragment != null) {
