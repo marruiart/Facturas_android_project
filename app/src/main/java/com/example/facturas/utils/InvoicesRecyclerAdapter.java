@@ -31,8 +31,8 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
         this.listener = listener;
     }
 
-    public void setInvoices(ArrayList<InvoiceVO> invoices) {
-        this.invoices = invoices;
+    public void setInvoices(List<InvoiceVO> invoices) {
+        this.invoices = (ArrayList<InvoiceVO>) invoices;
     }
 
     @NonNull

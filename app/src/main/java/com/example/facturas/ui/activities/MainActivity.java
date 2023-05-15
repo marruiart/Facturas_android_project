@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         filter = new FilterDataVO();
     }
 
-    public void openFilterFragment(MenuItem menuItem) {
+    public MenuItem openFilterFragment(MenuItem menuItem) {
         FilterFragment filterFragment = new FilterFragment();
         Bundle passedData = new Bundle();
         // Hide no invoices found message
@@ -209,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 .beginTransaction()
                 .replace(R.id.fragmentContainerView, filterFragment, FRAGMENT_TAG)
                 .commit();
+        return menuItem;
     }
 
     @Override
@@ -222,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         Log.d("filterApplied", String.format("Original size: %d  Filtered size: %d", invoicesList.size(), filteredInvoicesList.size()));
     }
 
-    public void closeFilter(MenuItem menuItem) {
+    public MenuItem closeFilter(MenuItem menuItem) {
         Fragment filterFragment = getSupportFragmentManager()
                 .findFragmentByTag(FRAGMENT_TAG);
         if (filterFragment != null) {
@@ -231,5 +232,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     remove(filterFragment).
                     commit();
         }
+        return menuItem;
     }
 }
