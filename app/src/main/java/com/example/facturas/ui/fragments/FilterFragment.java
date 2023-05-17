@@ -55,9 +55,7 @@ public class FilterFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
         // Set toolbar
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.menu_filter);
-        toolbar.setTitle(R.string.fragment_filter_tv_filter_invoices);
+        setToolbar(view);
         // Retrieve invoices list and filter
         retrievePassedData();
         // Set datePickers, seekbar and checkboxes status
@@ -77,6 +75,12 @@ public class FilterFragment extends Fragment {
         }
     }
 
+    private void setToolbar(View view) {
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.menu_filter);
+        toolbar.setTitle(R.string.fragment_filter_tv_filter_invoices);
+    }
+
     private void retrievePassedData() {
         Bundle bundle = getArguments();
         assert bundle != null;
@@ -84,7 +88,12 @@ public class FilterFragment extends Fragment {
             // Get the ArrayList from the Bundle
             retrievedList = bundle.getParcelableArrayList("invoicesList", InvoiceVO.class);
             // Get the filter from the Bundle
-            filter = bundle.getParcelable("filter", FilterDataVO.class);
+            FilterDataVO clonedFilter = (FilterDataVO) bundle.getParcelable("filter", FilterDataVO.class);
+            try {
+                filter = (FilterDataVO) clonedFilter.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             retrievedList = bundle.getParcelableArrayList("invoicesList");
             filter = bundle.getParcelable("filter");

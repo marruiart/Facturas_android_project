@@ -5,11 +5,13 @@ import android.os.Parcelable;
 import android.view.View;
 import android.widget.CheckBox;
 
+import androidx.annotation.NonNull;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FilterDataVO implements Parcelable {
+public class FilterDataVO implements Parcelable, Cloneable {
     private int minRangeAmount;
     private int maxRangeAmount;
     private int amountProgress;
@@ -122,5 +124,11 @@ public class FilterDataVO implements Parcelable {
         dateIssuedFrom = new Date(in.readLong());
         dateIssuedTo = new Date(in.readLong());
         state = (HashMap<Integer, Boolean>) in.readSerializable();
+    }
+
+    @NonNull
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
