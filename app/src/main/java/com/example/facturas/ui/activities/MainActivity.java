@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -84,15 +85,17 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     private void subscribeUi(LiveData<List<InvoiceEntity>> liveData) {
-        // Update the list when the data changes
-        liveData.observe(MainActivity.this, invoiceEntities -> {
-            // onChanged callback method
+        // Create observer
+        Observer<List<InvoiceEntity>> observer = invoiceEntities -> {
+            // Action onChanged callback method
             if (invoiceEntities != null) {
                 invoicesList = InvoiceEntity.fromInvoiceEntityList(invoiceEntities);
                 // Init or update RecyclerView
                 printInvoicesList();
             }
-        });
+        };
+        // Update the list when the data changes
+        liveData.observe(MainActivity.this, observer);
     }
 
     // RecyclerView methods
@@ -143,9 +146,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.alert_dialog_title_info)
-                .setMessage(R.string.alert_dialog_message_non_available)
-                .setPositiveButton(R.string.alert_dialog_btn_close, (dialog, which) -> dialog.dismiss());
+        builder.setTitle(R.string.alert_dialog_title_info).setMessage(R.string.alert_dialog_message_non_available).setPositiveButton(R.string.alert_dialog_btn_close, (dialog, which) -> dialog.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -163,10 +164,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         passedData.putParcelableArrayList("invoicesList", invoicesList);
         passedData.putParcelable("filter", filter);
         filterFragment.setArguments(passedData);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragmentContainerView, filterFragment, FRAGMENT_TAG)
-                .commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, filterFragment, FRAGMENT_TAG).commit();
         return menuItem;
     }
 
@@ -182,13 +180,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     public MenuItem closeFilter(MenuItem menuItem) {
-        Fragment filterFragment = getSupportFragmentManager()
-                .findFragmentByTag(FRAGMENT_TAG);
+        Fragment filterFragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (filterFragment != null) {
-            getSupportFragmentManager().
-                    beginTransaction().
-                    remove(filterFragment).
-                    commit();
+            getSupportFragmentManager().beginTransaction().remove(filterFragment).commit();
         }
         return menuItem;
     }
