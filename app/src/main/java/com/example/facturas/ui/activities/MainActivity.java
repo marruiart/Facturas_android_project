@@ -81,21 +81,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
      */
     private void setLiveDataSubscription(InvoicesListViewModel viewModel) {
         // Subscribe to data changes
-        subscribeUi(viewModel.getAllInvoicesFromViewModel());
-    }
-
-    private void subscribeUi(LiveData<List<InvoiceEntity>> liveData) {
-        // Create observer
-        Observer<List<InvoiceEntity>> observer = invoiceEntities -> {
+        viewModel.getAllInvoicesFromViewModel().observe(MainActivity.this, invoiceEntities -> {
             // Action onChanged callback method
             if (invoiceEntities != null) {
                 invoicesList = InvoiceEntity.fromInvoiceEntityList(invoiceEntities);
                 // Init or update RecyclerView
                 printInvoicesList();
             }
-        };
-        // Update the list when the data changes
-        liveData.observe(MainActivity.this, observer);
+        });
     }
 
     // RecyclerView methods
