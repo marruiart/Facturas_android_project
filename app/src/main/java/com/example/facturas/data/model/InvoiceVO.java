@@ -9,15 +9,15 @@ import android.os.Parcelable;
 
 import androidx.room.Ignore;
 
-import com.example.facturas.data.App;
+import com.example.facturas.App;
 import com.example.facturas.R;
-import com.example.facturas.data.database.model.InvoiceEntity;
+import com.example.facturas.data.database.entity.InvoiceEntity;
 import com.example.facturas.utils.MyConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public final class InvoiceVO implements Parcelable {
+public final class InvoiceVO implements Parcelable, Invoice {
     private int id;
     private String descEstado;
     private final Float importeOrdenacion;
@@ -48,6 +48,7 @@ public final class InvoiceVO implements Parcelable {
         this.textColor = in.readInt();
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -56,6 +57,7 @@ public final class InvoiceVO implements Parcelable {
         this.id = id;
     }
 
+    @Override
     public String getDescEstado() {
         return descEstado;
     }
@@ -85,6 +87,7 @@ public final class InvoiceVO implements Parcelable {
         }
     }
 
+    @Override
     public Float getImporteOrdenacion() {
         return importeOrdenacion;
     }
@@ -93,11 +96,13 @@ public final class InvoiceVO implements Parcelable {
         return new SimpleDateFormat(format).format(fecha);
     }
 
+    @Override
     public Date getFecha() {
         return this.fecha;
     }
 
-    public int getTextColor() {
+    @Override
+    public Integer getTextColor() {
         return textColor;
     }
 

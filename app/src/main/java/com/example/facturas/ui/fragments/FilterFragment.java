@@ -6,9 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,15 +15,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.facturas.R;
 import com.example.facturas.data.model.FilterDataVO;
 import com.example.facturas.data.model.InvoiceVO;
-import com.example.facturas.ui.activities.MainActivity;
 import com.example.facturas.utils.MyConstants;
 
 import java.text.SimpleDateFormat;
@@ -88,12 +82,8 @@ public class FilterFragment extends Fragment {
             // Get the ArrayList from the Bundle
             retrievedList = bundle.getParcelableArrayList("invoicesList", InvoiceVO.class);
             // Get the filter from the Bundle
-            FilterDataVO clonedFilter = (FilterDataVO) bundle.getParcelable("filter", FilterDataVO.class);
-            try {
-                filter = (FilterDataVO) clonedFilter.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
+            FilterDataVO clonedFilter = bundle.getParcelable("filter", FilterDataVO.class);
+            filter = clonedFilter.cloneFilter();
         } else {
             retrievedList = bundle.getParcelableArrayList("invoicesList");
             filter = bundle.getParcelable("filter");

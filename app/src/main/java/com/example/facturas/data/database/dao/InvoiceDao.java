@@ -1,9 +1,9 @@
 package com.example.facturas.data.database.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.*;
 
-import com.example.facturas.data.database.model.InvoiceEntity;
-import com.example.facturas.data.model.InvoiceVO;
+import com.example.facturas.data.database.entity.InvoiceEntity;
 
 import java.util.List;
 
@@ -13,8 +13,7 @@ public interface InvoiceDao {
     void insertInvoices(InvoiceEntity... invoice);
 
     @Query("SELECT * FROM invoices")
-        // TODO implement LiveData
-    List<InvoiceEntity> getAllInvoices();
+    LiveData<List<InvoiceEntity>> getAllInvoicesFromDao();
 
     @Query("DELETE FROM invoices")
     void deleteAll();

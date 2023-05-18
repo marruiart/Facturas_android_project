@@ -1,4 +1,4 @@
-package com.example.facturas.utils;
+package com.example.facturas.ui.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,17 +9,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.facturas.R;
-import com.example.facturas.data.App;
+import com.example.facturas.App;
+import com.example.facturas.data.database.entity.InvoiceEntity;
 import com.example.facturas.data.model.InvoiceVO;
+import com.example.facturas.utils.MyConstants;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecyclerAdapter.InvoicesViewHolder> {
+public class InvoicesListAdapter extends RecyclerView.Adapter<InvoicesListAdapter.InvoicesViewHolder> {
     private ArrayList<InvoiceVO> invoices;
     private RecyclerOnClickListener listener;
 
-    public InvoicesRecyclerAdapter(List<InvoiceVO> invoices) {
+    public InvoicesListAdapter(List<InvoiceVO> invoices) {
         this.invoices = (ArrayList<InvoiceVO>) invoices;
     }
 
@@ -33,6 +36,7 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
 
     public void setInvoices(List<InvoiceVO> invoices) {
         this.invoices = (ArrayList<InvoiceVO>) invoices;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -59,7 +63,7 @@ public class InvoicesRecyclerAdapter extends RecyclerView.Adapter<InvoicesRecycl
 
     @Override
     public int getItemCount() {
-        return invoices.size();
+        return invoices == null ? 0 : invoices.size();
     }
 
     public class InvoicesViewHolder extends RecyclerView.ViewHolder {

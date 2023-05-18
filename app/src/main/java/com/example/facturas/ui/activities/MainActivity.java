@@ -6,39 +6,34 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.facturas.data.App;
-import com.example.facturas.data.database.model.InvoiceEntity;
+import com.example.facturas.data.database.entity.InvoiceEntity;
 import com.example.facturas.ui.fragments.FilterFragment;
-import com.example.facturas.utils.InvoicesRecyclerAdapter;
-import com.example.facturas.data.network.retrofit.InvoicesRetrofitApiService;
+import com.example.facturas.ui.adapters.InvoicesListAdapter;
 import com.example.facturas.R;
 import com.example.facturas.data.model.FilterDataVO;
 import com.example.facturas.data.model.InvoiceVO;
-import com.example.facturas.data.model.InvoicesApiResponse;
-import com.example.facturas.utils.AppExecutors;
+import com.example.facturas.viewmodel.InvoicesListViewModel;
 
 import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements FilterFragment.OnDataPassListener {
     private static final String FRAGMENT_TAG = "FILTER_FRAGMENT";
     private ArrayList<InvoiceVO> invoicesList = new ArrayList<>();
     private FilterDataVO filter = null;
-    private InvoicesRecyclerAdapter adapter;
+    private InvoicesListAdapter adapter;
+    private InvoicesListViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +47,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         setLayoutManager();
         // Set toolbar
         setSupportActionBar(findViewById(R.id.toolbar));
-        // Retrieve invoices list
-        getInvoicesList();
+        // Retrieve existing ViewModel (or create one if non-existent)
+        viewModel = new ViewModelProvider(this).get(InvoicesListViewModel.class);
+        // Subscribe to data changes
+        setLiveDataSubscription(viewModel);
         // Initialize invoice filter
         initializeFilter();
     }
@@ -74,66 +71,27 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             layoutManager = new LinearLayoutManager(MainActivity.this);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(layoutManager);
+            mRecyclerView.setHasFixedSize(true);
         }
     }
 
-    // Invoices list data management
-    private void getInvoicesList() {
-        // Retrieve invoices from local database, if exists
-        getInvoicesFromRoom();
-        // Callback to get the list of invoices from Retrofit Api
-        getInvoicesFromApi();
+    /**
+     * Invoices list data management
+     */
+    private void setLiveDataSubscription(InvoicesListViewModel viewModel) {
+        // Subscribe to data changes
+        subscribeUi(viewModel.getAllInvoicesFromViewModel());
     }
 
-    private void setStringsForInvoiceDescEstado() {
-        invoicesList.forEach(invoice -> invoice.setDescEstado(invoice.getDescEstado()));
-    }
-
-    private void getInvoicesFromRoom() {
-        AppExecutors.ioThread(() -> {
-            invoicesList = InvoiceEntity.toInvoiceVOList(App.getDatabase().getInvoiceDao().getAllInvoices());
-            Log.d("Fill/update invoicesList", "Room -> Size of 'facturas' list: " + invoicesList.size());
-            // Initialize or update RecyclerView
-            (MainActivity.this).runOnUiThread(this::printInvoicesList);
-        });
-    }
-
-    public void getInvoicesFromApi() {
-        Call<InvoicesApiResponse> call = InvoicesRetrofitApiService.getApiService().getInvoices();
-        call.enqueue(new Callback<InvoicesApiResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<InvoicesApiResponse> call, Response<InvoicesApiResponse> response) {
-                if (response.isSuccessful()) {
-                    int listSize = invoicesList.size();
-                    InvoicesApiResponse apiResponse = response.body();
-                    if (apiResponse != null) {
-                        // Retrieve the invoice list from the api
-                        invoicesList = (ArrayList<InvoiceVO>) apiResponse.getFacturas();
-                        Log.d("Fill/update invoicesList", "Api -> Size of 'facturas' list: " + invoicesList.size());
-                        // Set state as strings from app resources
-                        setStringsForInvoiceDescEstado();
-                        // Insert the data into Room database
-                        insertDataInRoomDatabase();
-                        if (listSize != invoicesList.size()) {
-                            // If changed, print invoices in RecyclerView
-                            printInvoicesList();
-                        }
-                    }
-                }
+    private void subscribeUi(LiveData<List<InvoiceEntity>> liveData) {
+        // Update the list when the data changes
+        liveData.observe(MainActivity.this, invoiceEntities -> {
+            // onChanged callback method
+            if (invoiceEntities != null) {
+                invoicesList = InvoiceEntity.fromInvoiceEntityList(invoiceEntities);
+                // Init or update RecyclerView
+                printInvoicesList();
             }
-
-            @Override
-            public void onFailure(Call<InvoicesApiResponse> call, Throwable t) {
-                String error = t.getLocalizedMessage();
-                Log.d("onFailure error message", error);
-            }
-        });
-    }
-
-    private void insertDataInRoomDatabase() {
-        AppExecutors.ioThread(() -> {
-            App.getDatabase().getInvoiceDao().deleteAll();
-            App.getDatabase().getInvoiceDao().insertInvoices(InvoiceEntity.fromInvoiceVOList(invoicesList));
         });
     }
 
@@ -152,15 +110,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     private void initializeRecyclerViewAdapter() {
         initializeRecyclerViewAdapter(invoicesList);
+        setAdapterToRecyclerView();
     }
 
     private void initializeRecyclerViewAdapter(ArrayList<InvoiceVO> invoicesList) {
-        adapter = new InvoicesRecyclerAdapter(invoicesList);
+        adapter = new InvoicesListAdapter(invoicesList);
     }
 
     private void updateRecyclerViewAdapter(ArrayList<InvoiceVO> newInvoiceList) {
         adapter.setInvoices(newInvoiceList);
-        adapter.notifyDataSetChanged();
     }
 
     private void setClickListenersOnItems() {

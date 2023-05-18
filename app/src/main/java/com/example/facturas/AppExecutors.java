@@ -1,4 +1,4 @@
-package com.example.facturas.utils;
+package com.example.facturas;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
