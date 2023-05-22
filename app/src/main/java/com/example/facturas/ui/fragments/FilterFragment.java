@@ -81,8 +81,8 @@ public class FilterFragment extends Fragment {
             // Get the ArrayList from the Bundle
             retrievedList = bundle.getParcelableArrayList("invoicesList", InvoiceVO.class);
             // Get the filter from the Bundle
-            FilterDataVO clonedFilter = bundle.getParcelable("filter", FilterDataVO.class);
-            filter = clonedFilter.cloneFilter();
+            FilterDataVO retrievedFilter = bundle.getParcelable("filter", FilterDataVO.class);
+            filter = retrievedFilter.cloneFilter();
         } else {
             retrievedList = bundle.getParcelableArrayList("invoicesList");
             filter = bundle.getParcelable("filter");
@@ -168,7 +168,6 @@ public class FilterFragment extends Fragment {
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), listener, date.getYear(), date.getMonthValue(), date.getDayOfMonth());
         datePickerDialog.show();
     }
-
 
     // SeekBar related methods
     private void findMaxRangeAmount() {
