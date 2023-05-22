@@ -23,12 +23,11 @@ import com.example.facturas.data.model.FilterDataVO;
 import com.example.facturas.data.model.InvoiceVO;
 import com.example.facturas.utils.MyConstants;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class FilterFragment extends Fragment {
@@ -101,18 +100,6 @@ public class FilterFragment extends Fragment {
         setSeekbarStatus(view);
     }
 
-    private Date getCalendarDate(Calendar calendar, int year, int month, int dayOfMonth) {
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        return calendar.getTime();
-    }
-
-    private int getCurrentDateFromCalendar(final int YEAR_MONTH_OR_DAY) {
-        final Calendar calendar = Calendar.getInstance();
-        return calendar.get(YEAR_MONTH_OR_DAY);
-    }
-
     private void setClickListeners(View view) {
         Button fromDateBtn;
         Button toDateBtn;
@@ -134,33 +121,19 @@ public class FilterFragment extends Fragment {
 
     // DatePickers related methods
     private void setDatePickersStatus(View view) {
-        SimpleDateFormat dateFormat;
-        String dateStr;
-        Date originDate = new Date(0);
-        Date now = new Date();
-
-        dateFormat = new SimpleDateFormat(MyConstants.DATE_FORMAT, Locale.getDefault());
-        if (!originDate.equals(filter.getDateIssuedFrom())) {
-            dateStr = dateFormat.format(filter.getDateIssuedFrom());
-            Button btnPickerFrom = view.findViewById(R.id.btn_pickerFrom);
-            if (btnPickerFrom != null) {
-                btnPickerFrom.setText(dateStr);
-            }
+        // Change text in date picker button from if not epoch day
+        if (!MyConstants.EPOCH_DATE.isEqual(filter.getDateIssuedFrom())) {
+            changeDateButtonText(filter.getDateIssuedFrom(), view.findViewById(R.id.btn_pickerFrom));
         }
-        if (!now.equals(filter.getDateIssuedTo())) {
-            dateStr = dateFormat.format(filter.getDateIssuedTo());
-            Button btnPickerTo = view.findViewById(R.id.btn_pickerTo);
-            if (btnPickerTo != null) {
-                btnPickerTo.setText(dateStr);
-            }
-        }
+        // Change text in date picker button to
+        changeDateButtonText(filter.getDateIssuedTo(), view.findViewById(R.id.btn_pickerTo));
     }
 
     private void setDateButtonListener(Button button) {
         // Create listener that change button text on date set
         if (button != null) {
             DatePickerDialog.OnDateSetListener listener = createDateButtonListener(button);
-            button.setOnClickListener(btnView -> showDatePickerDialog(listener));
+            button.setOnClickListener(btnView -> showDatePickerDialog(listener, button));
         } else {
             Log.d("setDateButtonListener", "Null button");
         }
@@ -168,7 +141,7 @@ public class FilterFragment extends Fragment {
 
     private DatePickerDialog.OnDateSetListener createDateButtonListener(Button clickedBtn) {
         return (view, year, month, dayOfMonth) -> {
-            Date date = getCalendarDate(Calendar.getInstance(), year, month, dayOfMonth);
+            LocalDate date = LocalDate.of(year, month + 1, dayOfMonth);
             if (clickedBtn.getId() == R.id.btn_pickerFrom) {
                 filter.setDateIssuedFrom(date);
             } else if (clickedBtn.getId() == R.id.btn_pickerTo) {
@@ -178,19 +151,21 @@ public class FilterFragment extends Fragment {
         };
     }
 
-    private void changeDateButtonText(Date date, Button clickedBtn) {
+    private void changeDateButtonText(LocalDate date, Button clickedBtn) {
         // Set picked date
-        String dateStr = new SimpleDateFormat(MyConstants.DATE_FORMAT, Locale.getDefault()).format(date);
+        String dateStr = date.format(DateTimeFormatter.ofPattern(MyConstants.DATE_FORMAT));
         clickedBtn.setText(dateStr);
     }
 
-    private void showDatePickerDialog(DatePickerDialog.OnDateSetListener listener) {
-        int currentYear = getCurrentDateFromCalendar(Calendar.YEAR);
-        int currentMonth = getCurrentDateFromCalendar(Calendar.MONTH);
-        int currentDay = getCurrentDateFromCalendar(Calendar.DAY_OF_MONTH);
-
+    private void showDatePickerDialog(DatePickerDialog.OnDateSetListener listener, Button clickedBtn) {
+        LocalDate date;
+        try {
+            date = LocalDate.parse(clickedBtn.getText(), DateTimeFormatter.ofPattern(MyConstants.DATE_FORMAT));
+        } catch (DateTimeParseException e) {
+            date = LocalDate.now();
+        }
         // Show DatePickerDialog
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), listener, currentYear, currentMonth, currentDay);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), listener, date.getYear(), date.getMonthValue(), date.getDayOfMonth());
         datePickerDialog.show();
     }
 
@@ -306,8 +281,8 @@ public class FilterFragment extends Fragment {
     }
 
     private void applyDateFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
-        filteredInvoicesList.removeIf(i -> i.getFecha().before(filter.getDateIssuedFrom()));
-        filteredInvoicesList.removeIf(i -> i.getFecha().after(filter.getDateIssuedTo()));
+        filteredInvoicesList.removeIf(i -> i.getFecha().isBefore(filter.getDateIssuedFrom()));
+        filteredInvoicesList.removeIf(i -> i.getFecha().isAfter(filter.getDateIssuedTo()));
     }
 
     private void applyAmountFilter(ArrayList<InvoiceVO> filteredInvoicesList) {
@@ -372,5 +347,4 @@ public class FilterFragment extends Fragment {
             Log.d("resetSeekbarAmount", "null amountSeekbar");
         }
     }
-
 }

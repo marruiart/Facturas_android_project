@@ -10,7 +10,7 @@ import com.example.facturas.data.database.entity.InvoiceEntity;
 import com.example.facturas.data.database.converter.DateConverter;
 import com.example.facturas.data.database.dao.InvoiceDao;
 
-@Database(entities = {InvoiceEntity.class}, version = 2)
+@Database(entities = {InvoiceEntity.class}, version = 3)
 @TypeConverters({DateConverter.class})
 public abstract class InvoicesDatabase extends RoomDatabase {
 

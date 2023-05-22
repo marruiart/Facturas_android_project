@@ -1,12 +1,12 @@
 package com.example.facturas.data.network.retrofit;
 
-import com.example.facturas.data.model.InvoiceVO;
 import com.example.facturas.utils.MyConstants;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -15,7 +15,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class InvoicesRetrofitApiService {
     private static InvoicesRetrofitApiRequests apiService;
-    public List<InvoiceVO> invoicesList = new ArrayList<>();
 
     public static InvoicesRetrofitApiRequests getApiService() {
         // Create interceptor and indicate log level
@@ -27,7 +26,7 @@ public class InvoicesRetrofitApiService {
 
         if (apiService == null) {
             Gson gson = new GsonBuilder()
-                    .setDateFormat(MyConstants.API_DATE_FORMAT)
+                    .registerTypeAdapter(LocalDate.class, localDateJsonDeserializer)
                     .create();
 
             Retrofit retrofit = new Retrofit.Builder()
@@ -39,4 +38,13 @@ public class InvoicesRetrofitApiService {
         }
         return apiService;
     }
+
+    public static JsonDeserializer<LocalDate> localDateJsonDeserializer = (jsonElem, type, context) -> {
+        if (jsonElem == null) {
+            return null;
+        }
+        String localDateStr = jsonElem.getAsString();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(MyConstants.API_DATE_FORMAT);
+        return LocalDate.parse(localDateStr, formatter);
+    };
 }

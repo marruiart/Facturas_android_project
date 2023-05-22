@@ -49,7 +49,9 @@ public class InvoicesRepository {
     }
 
     public void insertInvoices(InvoiceEntity... invoices) {
-        database.invoiceDao().insertInvoices(invoices);
+        AppExecutors.ioThread(() -> {
+            database.invoiceDao().insertInvoices(invoices);
+        });
     }
 
     /**

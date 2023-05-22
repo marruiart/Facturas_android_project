@@ -1,5 +1,7 @@
 package com.example.facturas.utils;
 
+import java.time.LocalDate;
+
 public final class MyConstants {
 
     private MyConstants() {
@@ -7,7 +9,7 @@ public final class MyConstants {
     }
 
     // General
-    public static final String DATE_FORMAT = "dd MMM yyyy";
+    public static final String DATE_FORMAT = "dd/MMM/yyyy";
     public static final String API_DATE_FORMAT = "dd/MM/yyyy";
 
     // InvoiceVO
@@ -20,4 +22,9 @@ public final class MyConstants {
     // Retrofit Api service
     public static final String BASE_URL = "https://viewnextandroid2.wiremockapi.cloud/";
     public static final String URL_PATH = "facturas";
+
+    // Dates
+    public static final LocalDate EPOCH_DATE = LocalDate.ofEpochDay(0);
+    public static final LocalDate NOW = LocalDate.now();
+
 }

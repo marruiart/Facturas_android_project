@@ -1,6 +1,6 @@
 package com.example.facturas.data.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public interface Invoice {
     int getId();
@@ -9,7 +9,7 @@ public interface Invoice {
 
     Float getImporteOrdenacion();
 
-    Date getFecha();
+    LocalDate getFecha();
 
     Integer getTextColor();
 }

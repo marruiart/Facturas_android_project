@@ -14,22 +14,22 @@ import com.example.facturas.R;
 import com.example.facturas.data.database.entity.InvoiceEntity;
 import com.example.facturas.utils.MyConstants;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public final class InvoiceVO implements Parcelable, Invoice {
     private int id;
     private String descEstado;
     private final Float importeOrdenacion;
-    private final Date fecha;
+    private final LocalDate fecha;
     private Integer textColor;
 
     @Ignore
-    public InvoiceVO(String descEstado, Float importeOrdenacion, Date fecha) {
+    public InvoiceVO(String descEstado, Float importeOrdenacion, LocalDate fecha) {
         this(descEstado, importeOrdenacion, fecha, null);
     }
 
-    public InvoiceVO(String descEstado, Float importeOrdenacion, Date fecha, Integer textColor) {
+    public InvoiceVO(String descEstado, Float importeOrdenacion, LocalDate fecha, Integer textColor) {
         setDescEstado(descEstado);
         this.importeOrdenacion = importeOrdenacion;
         this.fecha = fecha;
@@ -41,11 +41,12 @@ public final class InvoiceVO implements Parcelable, Invoice {
     }
 
     // Constructor to read from Parcel
-    public InvoiceVO(Parcel in) {
-        this.descEstado = in.readString();
-        this.importeOrdenacion = in.readFloat();
-        this.fecha = new Date(in.readLong());
-        this.textColor = in.readInt();
+    protected InvoiceVO(Parcel in) {
+        id = in.readInt();
+        descEstado = in.readString();
+        importeOrdenacion = in.readFloat();
+        fecha = LocalDate.parse(in.readString());
+        textColor = in.readInt();
     }
 
     @Override
@@ -93,11 +94,11 @@ public final class InvoiceVO implements Parcelable, Invoice {
     }
 
     public String getFecha(String format) {
-        return new SimpleDateFormat(format).format(fecha);
+        return fecha.format(DateTimeFormatter.ofPattern(format));
     }
 
     @Override
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return this.fecha;
     }
 
@@ -117,18 +118,21 @@ public final class InvoiceVO implements Parcelable, Invoice {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(id);
         out.writeString(descEstado);
         out.writeFloat(importeOrdenacion);
-        out.writeLong(fecha.getTime());
-        out.writeInt(textColor);
+        out.writeString(fecha.toString());
+        out.writeValue(textColor);
     }
 
     // Parcelable CREATOR
     public static final Parcelable.Creator<InvoiceVO> CREATOR = new Parcelable.Creator<InvoiceVO>() {
+        @Override
         public InvoiceVO createFromParcel(Parcel in) {
             return new InvoiceVO(in);
         }
 
+        @Override
         public InvoiceVO[] newArray(int size) {
             return new InvoiceVO[size];
         }

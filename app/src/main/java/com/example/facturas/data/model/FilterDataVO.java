@@ -5,7 +5,9 @@ import android.os.Parcelable;
 import android.view.View;
 import android.widget.CheckBox;
 
-import java.util.Date;
+import com.example.facturas.utils.MyConstants;
+
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,20 +15,20 @@ public class FilterDataVO implements Parcelable {
     private int minRangeAmount;
     private int maxRangeAmount;
     private int amountProgress;
-    private Date dateIssuedFrom;
-    private Date dateIssuedTo;
+    private LocalDate dateIssuedFrom;
+    private LocalDate dateIssuedTo;
     private HashMap<Integer, Boolean> state;
 
     public FilterDataVO() {
         this.minRangeAmount = 0;
         this.maxRangeAmount = 0;
         this.amountProgress = 0;
-        this.dateIssuedFrom = new Date(0);
-        this.dateIssuedTo = new Date();
+        this.dateIssuedFrom = MyConstants.EPOCH_DATE;
+        this.dateIssuedTo = MyConstants.NOW;
         this.state = new HashMap<>();
     }
 
-    private FilterDataVO(int minRangeAmount, int maxRangeAmount, int amountProgress, Date dateIssuedFrom, Date dateIssuedTo, HashMap<Integer, Boolean> state) {
+    private FilterDataVO(int minRangeAmount, int maxRangeAmount, int amountProgress, LocalDate dateIssuedFrom, LocalDate dateIssuedTo, HashMap<Integer, Boolean> state) {
         this.minRangeAmount = minRangeAmount;
         this.maxRangeAmount = maxRangeAmount;
         this.amountProgress = amountProgress;
@@ -37,8 +39,8 @@ public class FilterDataVO implements Parcelable {
 
     public void resetInstance(View view) {
         this.amountProgress = this.maxRangeAmount;
-        this.dateIssuedFrom = new Date(0);
-        this.dateIssuedTo = new Date();
+        this.dateIssuedFrom = MyConstants.EPOCH_DATE;
+        this.dateIssuedTo = MyConstants.NOW;
         state.forEach((checkboxId, isChecked) -> {
             CheckBox stateCheckbox = view.findViewById(checkboxId);
             stateCheckbox.setChecked(false);
@@ -69,19 +71,19 @@ public class FilterDataVO implements Parcelable {
         this.amountProgress = amountProgress;
     }
 
-    public Date getDateIssuedFrom() {
+    public LocalDate getDateIssuedFrom() {
         return dateIssuedFrom;
     }
 
-    public void setDateIssuedFrom(Date dateIssuedFrom) {
+    public void setDateIssuedFrom(LocalDate dateIssuedFrom) {
         this.dateIssuedFrom = dateIssuedFrom;
     }
 
-    public Date getDateIssuedTo() {
+    public LocalDate getDateIssuedTo() {
         return dateIssuedTo;
     }
 
-    public void setDateIssuedTo(Date dateIssuedTo) {
+    public void setDateIssuedTo(LocalDate dateIssuedTo) {
         this.dateIssuedTo = dateIssuedTo;
     }
 
@@ -107,8 +109,8 @@ public class FilterDataVO implements Parcelable {
         dest.writeInt(minRangeAmount);
         dest.writeInt(maxRangeAmount);
         dest.writeInt(amountProgress);
-        dest.writeLong(dateIssuedFrom.getTime());
-        dest.writeLong(dateIssuedTo.getTime());
+        dest.writeSerializable(dateIssuedFrom);
+        dest.writeSerializable(dateIssuedTo);
         dest.writeSerializable(state);
     }
 
@@ -128,8 +130,8 @@ public class FilterDataVO implements Parcelable {
         minRangeAmount = in.readInt();
         maxRangeAmount = in.readInt();
         amountProgress = in.readInt();
-        dateIssuedFrom = new Date(in.readLong());
-        dateIssuedTo = new Date(in.readLong());
+        dateIssuedFrom = (LocalDate) (in.readSerializable());
+        dateIssuedTo = (LocalDate) (in.readSerializable());
         state = (HashMap<Integer, Boolean>) in.readSerializable();
     }
 

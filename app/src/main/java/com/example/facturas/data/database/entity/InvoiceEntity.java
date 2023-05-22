@@ -6,7 +6,7 @@ import com.example.facturas.data.model.Invoice;
 import com.example.facturas.data.model.InvoiceVO;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity(tableName = "invoices")
@@ -18,7 +18,7 @@ public class InvoiceEntity implements Invoice {
     @ColumnInfo(name = "importeOrdenacion")
     private Float importeOrdenacion;
     @ColumnInfo(name = "fecha")
-    private Date fecha;
+    private LocalDate fecha;
     @ColumnInfo(name = "textColor")
     private Integer textColor;
 
@@ -50,11 +50,11 @@ public class InvoiceEntity implements Invoice {
     }
 
     @Override
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
@@ -71,7 +71,7 @@ public class InvoiceEntity implements Invoice {
     }
 
     @Ignore
-    public InvoiceEntity(String descEstado, Float importeOrdenacion, Date fecha, Integer textColor) {
+    public InvoiceEntity(String descEstado, Float importeOrdenacion, LocalDate fecha, Integer textColor) {
         this.descEstado = descEstado;
         this.importeOrdenacion = importeOrdenacion;
         this.fecha = fecha;
