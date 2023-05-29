@@ -10,8 +10,7 @@ import com.example.facturas.data.database.InvoicesDatabase;
 import com.example.facturas.data.database.entity.InvoiceEntity;
 import com.example.facturas.data.model.InvoiceVO;
 import com.example.facturas.data.model.InvoicesApiResponse;
-import com.example.facturas.data.network.retrofit.InvoicesRetrofitApiService;
-import com.example.facturas.ui.activities.MainActivity;
+import com.example.facturas.data.network.retrofit.InvoicesApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +69,7 @@ public class InvoicesRepository {
 
     private void refreshInvoices() {
         // Use of Retrofit to call the API and update the database
-        Call<InvoicesApiResponse> call = InvoicesRetrofitApiService.getApiService().getInvoices();
+        Call<InvoicesApiResponse> call = InvoicesApiClient.getRetromockService().getInvoices();
         call.enqueue(new Callback<InvoicesApiResponse>() {
             @Override
             public void onResponse(@NonNull Call<InvoicesApiResponse> call, Response<InvoicesApiResponse> response) {
@@ -86,9 +85,9 @@ public class InvoicesRepository {
                         setStringsForInvoiceDescEstado(invoicesList);
                         // Insert the data into Room database
                         populateRoomDatabase(invoicesList);
+                        Log.d("refreshInvoices()", "Invoices refreshed");
                     }
                 }
-                Log.d("refreshInvoices()", "Invoices refreshed");
             }
 
             @Override
