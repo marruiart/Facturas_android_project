@@ -1,0 +1,20 @@
+{
+  "numFacturas": 1,
+  "facturas": [
+    {
+      "descEstado": "Pendiente de pago",
+      "importeOrdenacion": 100.02,
+      "fecha": "22/05/2023"
+    },
+    {
+      "descEstado": "Pendiente de pago",
+      "importeOrdenacion": 34.8,
+      "fecha": "12/07/2018"
+    },
+    {
+      "descEstado": "Pendiente de pago",
+      "importeOrdenacion": 9.34,
+      "fecha": "02/12/2019"
+    }
+  ]
+}

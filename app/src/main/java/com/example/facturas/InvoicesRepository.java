@@ -10,8 +10,7 @@ import com.example.facturas.data.database.InvoicesDatabase;
 import com.example.facturas.data.database.entity.InvoiceEntity;
 import com.example.facturas.data.model.InvoiceVO;
 import com.example.facturas.data.model.InvoicesApiResponse;
-import com.example.facturas.data.network.retrofit.InvoicesRetrofitApiService;
-import com.example.facturas.ui.activities.MainActivity;
+import com.example.facturas.data.network.retrofit.InvoicesApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +57,12 @@ public class InvoicesRepository {
      * Get the list of products from the database and get notified when the data changes.
      */
     public LiveData<List<InvoiceEntity>> getAllInvoicesFromRepository() {
+        return getAllInvoicesFromRepository(false);
+    }
+
+    public LiveData<List<InvoiceEntity>> getAllInvoicesFromRepository(boolean isFromRetromock) {
         // Update data from API
-        refreshInvoices();
+        refreshInvoices(isFromRetromock);
         // Return invoices from updated database
         return database.invoiceDao().getAllInvoicesFromDao();
     }
@@ -68,9 +71,15 @@ public class InvoicesRepository {
         database.invoiceDao().deleteAll();
     }
 
-    private void refreshInvoices() {
-        // Use of Retrofit to call the API and update the database
-        Call<InvoicesApiResponse> call = InvoicesRetrofitApiService.getApiService().getInvoices();
+    private void refreshInvoices(boolean isFromRetromock) {
+        Call<InvoicesApiResponse> call;
+
+        // Use of Retrofit or Retromock to call the API and update the database
+        if (isFromRetromock) {
+            call = InvoicesApiClient.getRetromockService().getInvoices();
+        } else {
+            call = InvoicesApiClient.getRetrofitService().getInvoices();
+        }
         call.enqueue(new Callback<InvoicesApiResponse>() {
             @Override
             public void onResponse(@NonNull Call<InvoicesApiResponse> call, Response<InvoicesApiResponse> response) {
@@ -86,9 +95,9 @@ public class InvoicesRepository {
                         setStringsForInvoiceDescEstado(invoicesList);
                         // Insert the data into Room database
                         populateRoomDatabase(invoicesList);
+                        Log.d("refreshInvoices()", "Invoices refreshed");
                     }
                 }
-                Log.d("refreshInvoices()", "Invoices refreshed");
             }
 
             @Override

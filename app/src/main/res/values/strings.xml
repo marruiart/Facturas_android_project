@@ -6,7 +6,8 @@
 
     <!-- activity_main -->
     <string name="activity_main_tv_not_found">No invoices found</string>
-    <string name="activity_main_toast_list_updated">Invoices list updated</string>
+    <string name="activity_main_toast_list_updated_from_retromock">Invoices list updated from Retromock</string>
+    <string name="activity_main_toast_list_updated_from_retrofit">Invoices list updated from Retrofit</string>
 
     <!-- alert_dialog -->
     <string name="alert_dialog_title_info">Information</string>
