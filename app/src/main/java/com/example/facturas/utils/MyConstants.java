@@ -20,8 +20,8 @@ public final class MyConstants {
     public static final String INVOICE_DESC_ESTADO_PLAN_PAGO = "Plan de pago";
 
     // Retrofit Api service
-    public static final String BASE_URL = "https://viewnextandroid2.wiremockapi.cloud/";
-    public static final String URL_PATH = "facturas";
+    public static final String BASE_URL = "https://raw.githubusercontent.com/marruiart/json/main/";
+    public static final String URL_PATH = "README.md";
 
     // Dates
     public static final LocalDate EPOCH_DATE = LocalDate.ofEpochDay(0);

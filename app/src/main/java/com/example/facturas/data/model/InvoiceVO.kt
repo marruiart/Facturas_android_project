@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.os.Parcel
 import android.os.Parcelable
 import android.os.Parcelable.Creator
-import androidx.room.Ignore
 import com.example.facturas.App
 import com.example.facturas.R
 import com.example.facturas.data.database.entity.InvoiceEntity
@@ -12,23 +11,14 @@ import com.example.facturas.utils.MyConstants
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-open class InvoiceVO : Parcelable, Invoice {
+class InvoiceVO : Parcelable, Invoice {
     private var id = 0
     private var descEstado: String? = null
     private val importeOrdenacion: Float
     private val fecha: LocalDate
     private var textColor: Int?
 
-    @Ignore
-    constructor(descEstado: String?, importeOrdenacion: Float, fecha: LocalDate) : this(
-        descEstado,
-        importeOrdenacion,
-        fecha,
-        null
-    ) {
-    }
-
-    constructor(descEstado: String?, importeOrdenacion: Float, fecha: LocalDate, textColor: Int?) {
+    constructor(descEstado: String?, importeOrdenacion: Float, fecha: LocalDate, textColor: Int? = null) {
         setDescEstado(descEstado)
         this.importeOrdenacion = importeOrdenacion
         this.fecha = fecha
