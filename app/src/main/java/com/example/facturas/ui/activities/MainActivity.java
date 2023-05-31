@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.facturas.App;
 import com.example.facturas.data.database.entity.InvoiceEntity;
 import com.example.facturas.ui.fragments.FilterFragment;
 import com.example.facturas.ui.adapters.InvoicesListAdapter;
@@ -41,7 +43,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         initializeActivity();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        App.setCurrentActivity(this);
+    }
+
     private void initializeActivity() {
+        App.setCurrentActivity(this);
         // Set layout for the RecyclerView
         setLayoutManager();
         // Set toolbar
@@ -92,9 +101,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     // RecyclerView methods
     private void printInvoicesList() {
         if (adapter != null) {
+            ToggleButton toggleButton = findViewById(R.id.toggle_button);
             updateRecyclerViewAdapter(invoicesList);
+            if (toggleButton.isChecked()) {
+                Toast.makeText(MainActivity.this, R.string.activity_main_toast_list_updated_from_retromock, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, R.string.activity_main_toast_list_updated_from_retrofit, Toast.LENGTH_SHORT).show();
+            }
             setClickListenersOnItems();
-            Toast.makeText(MainActivity.this, R.string.activity_main_toast_list_updated, Toast.LENGTH_SHORT).show();
         } else {
             initializeRecyclerViewAdapter();
             setClickListenersOnItems();
@@ -176,5 +190,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             getSupportFragmentManager().beginTransaction().remove(filterFragment).commit();
         }
         return menuItem;
+    }
+
+    public void refreshInvoicesFromRetromock(View view) {
+        ToggleButton toggleButton = view.findViewById(R.id.toggle_button);
+        viewModel.refreshAllInvoices(toggleButton.isChecked());
     }
 }

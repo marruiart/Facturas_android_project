@@ -19,7 +19,7 @@ public class InvoicesApiClient {
     private static InvoicesApiService retromockService;
 
     private InvoicesApiClient() {
-        // private constructor to hide de public one
+        // Private constructor to hide the implicit public one
     }
 
     public static InvoicesApiService getRetromockService() {

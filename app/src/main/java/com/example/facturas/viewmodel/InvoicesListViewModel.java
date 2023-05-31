@@ -33,4 +33,10 @@ public class InvoicesListViewModel extends AndroidViewModel {
     public LiveData<List<InvoiceEntity>> getAllInvoicesFromViewModel() {
         return allInvoices;
     }
+
+    public LiveData<List<InvoiceEntity>> refreshAllInvoices(boolean isFromRetromock) {
+        allInvoices = repository.getAllInvoicesFromRepository(isFromRetromock);
+        return allInvoices;
+    }
+
 }

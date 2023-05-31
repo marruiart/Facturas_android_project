@@ -7,8 +7,6 @@ import com.example.facturas.R;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import co.infinum.retromock.BodyFactory;
 
@@ -18,7 +16,6 @@ public final class ResourceBodyFactory implements BodyFactory {
     public InputStream create(@NonNull final String input) throws IOException {
         // this will throw if input is empty string, regular class loader opens a stream to directory
         return App.getContext().getResources().openRawResource(R.raw.invoices);
-        //return Files.newInputStream(Paths.get(ResourceBodyFactory.class.getClassLoader().getResource(input).getFile()));
     }
 }
 
